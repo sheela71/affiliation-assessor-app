@@ -139,6 +139,7 @@ const CaptureSelfie = () => {
                 text={"Re-capture photo"}
                 styles="bg-white border-[#DBDBDB] border-1 text-[#535461] hover:text-[#535461]"
                 onClick={() => setImg(null)}
+                userEventMessage="Re-capture Image"
               >
                 Retake
               </Button>

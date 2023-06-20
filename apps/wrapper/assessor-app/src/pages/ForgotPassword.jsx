@@ -108,7 +108,7 @@ const ForgotPassword = () => {
               </p>
             )}
           </div>
-          <Button text="Next" onClick={showPassScreen} />
+          <Button text="Next" onClick={showPassScreen} userEventMessage="10 digit mobile number entered, navigate to next screen" />
         </div>
       )}
       {!otpPage && changePassPage && !passChanged && (

@@ -3,6 +3,8 @@ import localforage from "localforage";
 import Cookies from "js-cookie";
 
 import { getMedicalAssessments, getPrefillXML, getSubmissionXML } from "../api";
+import { logUserEvents } from "./captureUserEvent";
+import { constants as C } from "./constants";
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 
@@ -17,8 +19,13 @@ export const makeHasuraCalls = async (query) => {
     },
     body: JSON.stringify(query),
   })
-    .then(async (response) => await validateResponse(response))
+    .then(async (response) => {
+      await validateResponse(response)
+      // logUserEvents(C.API_CALL,C.SUCCESS,response)
+
+    })
     .catch((error) => {
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,error)
       return error;
     });
 };
@@ -29,6 +36,7 @@ const validateResponse = async (response) => {
     ...apiRes,
     responseStatus: false,
   };
+  // logUserEvents(C.API_CALL,C.SUCCESS,apiRes)
   return jsonResponse;
 };
 
@@ -84,8 +92,17 @@ export const logout = () => {
   sessionStorage.clear();
   localforage.clear();
   window.location = "/";
-  removeCookie("userData");
+  removeAllCookies()
 };
+
+export const removeAllCookies = () =>{
+  // retrieve all cookies
+var Cookies = document.cookie.split(';');
+// set past expiry to all cookies
+for (var i = 0; i < Cookies.length; i++) {
+  document.cookie = Cookies[i] + "=; expires="+ new Date(0).toUTCString();
+}
+}
 
 export const removeCookie = (cname) => {
   try {

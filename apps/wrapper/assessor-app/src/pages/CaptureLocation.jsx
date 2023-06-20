@@ -8,6 +8,8 @@ import { getCookie, getSpecificDataFromForage, setToLocalForage } from "../utils
 import Button from "../components/Button";
 import CommonLayout from "../components/CommonLayout";
 import Loader from "../components/Loader";
+import { logUserEvents } from "../utils/captureUserEvent";
+import { constants as C } from "../utils/constants";
 
 const CaptureLocation = () => {
   const [lat, setLat] = useState();
@@ -74,6 +76,7 @@ const CaptureLocation = () => {
         setLong(p.coords.longitude);
         setShowMap(true);
         setLoading(false);
+        logUserEvents(C.API_CALL,C.SUCCESS,"Location Captured: "+p)
 
         setState({
           ...state,
@@ -116,6 +119,7 @@ const CaptureLocation = () => {
       });
     } else {
       setError(`Please allow location access.`);
+      logUserEvents(C.API_CALL,C.ERROR,"Location access not granted: "+navigator)
       setLoading(false);
       setTimeout(() => {
         setError(false);
@@ -256,6 +260,7 @@ const handleSubmit = () => {
                   text="Continue"
                   styles="bg-primary border-primary text-white"
                   onClick={handleSubmit}
+                  userEventMessage="capture location or selfie if not present"
                 />
 
                 <Button 

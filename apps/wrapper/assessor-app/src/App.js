@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createContext, useEffect, useState } from "react";
 
 import ROUTE_MAP from "./routing/routeMap";
-import { getCookie } from "./utils";
+import { getCookie, setCookie } from "./utils";
 
 import MedicalAssessor from "./pages/MedicalAssessor";
 import MedicalAssessments from "./pages/MedicalAssessments";
@@ -46,6 +46,7 @@ export const StateContext = createContext();
 
 function App() {
   const [state, setState] = useState();
+  setCookie("deviceId", crypto.randomUUID());
   useEffect(() => {
     const user = getCookie("userData");
   }, []);

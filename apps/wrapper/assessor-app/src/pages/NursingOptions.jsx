@@ -6,6 +6,8 @@ import { StateContext } from "../App";
 import { getAssessmentStatus } from "../api";
 import ROUTE_MAP from "../routing/routeMap";
 import { getCookie, setCookie } from "../utils";
+import { logUserEvents } from "../utils/captureUserEvent";
+import { constants as C } from "../utils/constants";
 
 const NursingOptions = () => {
   const { state, setState } = useContext(StateContext);
@@ -61,9 +63,11 @@ const NursingOptions = () => {
             css={state?.userData?.filledForms?.["nursing_infrastructure"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
             styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
             onClick={() => {
-              if (!state?.userData?.filledForms?.["nursing_infrastructure"])
-                handleNavigation(ROUTE_MAP.nursing_param_formName + "nursing_infrastructure");
+              if (!state?.userData?.filledForms?.["nursing_infrastructure"]){
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.nursing_param_formName + "nursing_infrastructure")
+                handleNavigation(ROUTE_MAP.nursing_param_formName + "nursing_infrastructure");}
               else {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                 setError(
                   "You've already filled this asessment for today"
                 );
@@ -77,9 +81,11 @@ const NursingOptions = () => {
             css={state?.userData?.filledForms?.["nursing_academic"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
             styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
             onClick={() => {
-              if (!state?.userData?.filledForms?.["nursing_academic"])
-                handleNavigation(ROUTE_MAP.nursing_param_formName + "nursing_academic");
+              if (!state?.userData?.filledForms?.["nursing_academic"]){
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.nursing_param_formName + "nursing_academic")
+                handleNavigation(ROUTE_MAP.nursing_param_formName + "nursing_academic");}
               else {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                 setError(
                   "You've already filled this asessment for today"
                 );
@@ -93,9 +99,11 @@ const NursingOptions = () => {
             css={state?.userData?.filledForms?.["nursing_clinical_learning"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
             styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
             onClick={() => {
-              if (!state?.userData?.filledForms?.["nursing_clinical_learning"])
-                handleNavigation(ROUTE_MAP.nursing_param_formName + "nursing_clinical_learning");
+              if (!state?.userData?.filledForms?.["nursing_clinical_learning"]){
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.nursing_param_formName + "nursing_clinical_learning")
+                handleNavigation(ROUTE_MAP.nursing_param_formName + "nursing_clinical_learning");}
               else {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                 setError(
                   "You've already filled this asessment for today"
                 );
@@ -109,6 +117,7 @@ const NursingOptions = () => {
               text="OSCE Forms"
               styles={`lg:w-[70%] animate__animated animate__fadeInDown'}`}
               onClick={() => {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.osce_options)
                 handleNavigation(ROUTE_MAP.osce_options);
               }}
             />
@@ -120,9 +129,11 @@ const NursingOptions = () => {
             css={state?.userData?.filledForms?.["non_medical_nursing_basic_information"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
             styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
             onClick={() => {
-              if (!state?.userData?.filledForms?.["non_medical_nursing_basic_information"])
-                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_basic_information");
+              if (!state?.userData?.filledForms?.["non_medical_nursing_basic_information"]){
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.nursing_param_formName + "non_medical_nursing_basic_information")
+                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_basic_information");}
               else {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                 setError(
                   "You've already filled this asessment for today"
                 );
@@ -136,9 +147,11 @@ const NursingOptions = () => {
             css={state?.userData?.filledForms?.["non_medical_nursing_hostel_facilities"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
             styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
             onClick={() => {
-              if (!state?.userData?.filledForms?.["non_medical_nursing_hostel_facilities"])
-                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_hostel_facilities");
+              if (!state?.userData?.filledForms?.["non_medical_nursing_hostel_facilities"]){
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.nursing_param_formName + "non_medical_nursing_hostel_facilities")
+                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_hostel_facilities");}
               else {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                 setError(
                   "You've already filled this asessment for today"
                 );
@@ -152,9 +165,11 @@ const NursingOptions = () => {
             css={state?.userData?.filledForms?.["non_medical_nursing_infrastructure"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
             styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
             onClick={() => {
-              if (!state?.userData?.filledForms?.["non_medical_nursing_infrastructure"])
-                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_infrastructure");
+              if (!state?.userData?.filledForms?.["non_medical_nursing_infrastructure"]){
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.nursing_param_formName + "non_medical_nursing_infrastructure")
+                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_infrastructure");}
               else {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                 setError(
                   "You've already filled this asessment for today"
                 );
@@ -168,9 +183,11 @@ const NursingOptions = () => {
             css={state?.userData?.filledForms?.["non_medical_nursing_seats_sanctioned"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
             styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
             onClick={() => {
-              if (!state?.userData?.filledForms?.["non_medical_nursing_seats_sanctioned"])
-                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_seats_sanctioned");
+              if (!state?.userData?.filledForms?.["non_medical_nursing_seats_sanctioned"]){
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.nursing_param_formName + "non_medical_nursing_seats_sanctioned")
+                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_seats_sanctioned");}
               else {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                 setError(
                   "You've already filled this asessment for today"
                 );
@@ -184,9 +201,12 @@ const NursingOptions = () => {
             css={state?.userData?.filledForms?.["non_medical_nursing_teaching_faculty"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
             styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
             onClick={() => {
-              if (!state?.userData?.filledForms?.["non_medical_nursing_teaching_faculty"])
-                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_teaching_faculty");
+              if (!state?.userData?.filledForms?.["non_medical_nursing_teaching_faculty"]){
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.nursing_param_formName + "non_medical_nursing_teaching_faculty")
+                handleNavigation(ROUTE_MAP.nursing_param_formName + "non_medical_nursing_teaching_faculty");}
               else {
+                logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
+                
                 setError(
                   "You've already filled this asessment for today"
                 );

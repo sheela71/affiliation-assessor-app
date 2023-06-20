@@ -22,6 +22,7 @@ const Home = ({ handleStepChangeForLogin }) => {
           text="Login"
           styles="w-80 lg:w-[70%] lg:mt-[70px] animate__animated animate__fadeInDown"
           onClick={() => handleClick(ROUTE_MAP.login)}
+          userEventMessage="navigate to Login page"
         />
         {/* <Button
           text="Register"

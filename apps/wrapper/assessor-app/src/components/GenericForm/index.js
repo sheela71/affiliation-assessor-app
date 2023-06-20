@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './index.module.css';
 import beautify from "xml-beautifier";
 import { getPrefillXML, saveFormSubmission } from '../../api';
+import { logUserEvents } from '../../utils/captureUserEvent';
+import { constants as C } from '../../utils/constants';
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL
 const FORM_MANAGER_URL = process.env.REACT_APP_FORM_MANAGER_URL
@@ -88,6 +90,7 @@ const GenericForm = (props) => {
         "Content-type": "application/json; charset=UTF-8"
       },
     });
+    // logUserEvents(C.API_CALL,C.SUCCESS,jsonRes)
     jsonRes = await jsonRes.json();
     return jsonRes?.data;
   }

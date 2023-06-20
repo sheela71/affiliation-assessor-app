@@ -57,9 +57,9 @@ const MedicalAssessor = () => {
           </div>
 
           <div className="gap-6 flex flex-col">
-            <Button text="Today's Inspections" styles="w-full bg-primary text-white border-primary animate__animated animate__fadeInDown" onClick={() => handleClick(ROUTE_MAP.medical_assessments)} />
-            <Button text="Upcoming Inspections" styles="w-full bg-white text-primary border-primary border-[1px] animate__animated animate__fadeInDown" onClick={() => handleClick(ROUTE_MAP.upcoming_medical_assessments)} />
-            <Button text="Past Inspections" styles="w-full bg-white font-normal border-[1px] border-[#DBDBDB] text-[#535461] animate__animated animate__fadeInDown" onClick={() => handleClick(ROUTE_MAP.past_inspections)} />
+            <Button text="Today's Inspections" userEventMessage="Today's Inspections" styles="w-full bg-primary text-white border-primary animate__animated animate__fadeInDown" onClick={() => handleClick(ROUTE_MAP.medical_assessments)} />
+            <Button text="Upcoming Inspections" userEventMessage="Upcoming Inspections" styles="w-full bg-white text-primary border-primary border-[1px] animate__animated animate__fadeInDown" onClick={() => handleClick(ROUTE_MAP.upcoming_medical_assessments)} />
+            <Button text="Past Inspections" userEventMessage="Past Inspections" styles="w-full bg-white font-normal border-[1px] border-[#DBDBDB] text-[#535461] animate__animated animate__fadeInDown" onClick={() => handleClick(ROUTE_MAP.past_inspections)} />
           </div>
         </div>
 

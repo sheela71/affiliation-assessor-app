@@ -22,6 +22,8 @@ import {
   getSpecificDataFromForage,
   setToLocalForage,
 } from "../utils";
+import { logUserEvents } from "../utils/captureUserEvent";
+import { constants as C } from "../utils/constants";
 
 const MedicalAssessments = () => {
   const { state, setState } = useContext(StateContext);
@@ -48,8 +50,10 @@ const MedicalAssessments = () => {
     setToLocalForage("todayAssessment", obj);
 
     if (buttonText?.toLowerCase() === "continue") {
+      logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.assessment_type)
       navigate(ROUTE_MAP.assessment_type);
     } else {
+      logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.capture_location)
       navigate(ROUTE_MAP.capture_location);
     }
   };

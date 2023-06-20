@@ -1,6 +1,9 @@
 import axios from "axios";
 import { getCookie, makeHasuraCalls } from "../utils";
 import customPost from "./customPost";
+import customPostUserEvent from "./customPostUserEvent";
+import { logUserEvents } from "../utils/captureUserEvent";
+import { constants as C } from "../utils/constants";
 
 const BASE_URL = process.env.REACT_APP_USER_SERVICE_URL;
 const applicationId = process.env.REACT_APP_APPLICATION_ID;
@@ -14,8 +17,10 @@ export const loginMedical = async (username, pass) => {
       loginId: username,
       applicationId: applicationId,
     });
+    logUserEvents(C.API_CALL,C.SUCCESS,res)
     return res.data;
   } catch (err) {
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,err)
     console.log(err);
     return err;
   }
@@ -30,8 +35,10 @@ export const sendOtpToMobile = async (mobile) => {
       },
       { headers: { "x-application-id": applicationId } }
     );
+    logUserEvents(C.API_CALL,C.SUCCESS,res)
     return res.data;
   } catch (err) {
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,err)
     console.log(err);
     return err;
   }
@@ -48,8 +55,10 @@ export const verifyOtpSavePassword = async (mobile, pass, otp) => {
       },
       { headers: { "x-application-id": applicationId } }
     );
+    logUserEvents(C.API_CALL,C.SUCCESS,res)
     return res.data;
   } catch (err) {
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,err)
     console.log(err);
     return err;
   }
@@ -62,6 +71,11 @@ export const getAssessor = async (postData) => {
 
 export const getTodaysAssessment = async (postData) => {
   const res = await customPost.post("rest/getTodaysInspections", postData);
+  return res;
+};
+
+export const postUserEvents = async (postData) => {
+  const res = await customPostUserEvent.post("/events/logEvent", postData);
   return res;
 };
 
@@ -99,6 +113,7 @@ export const UploadImage = async (postData) => {
       "Content-Type": "multipart/form-data",
     }
   );
+  logUserEvents(C.API_CALL,C.SUCCESS,res)
   return res;
 };
 
@@ -186,8 +201,10 @@ export const getPrefillXML = async (
       },
       { headers: {} }
     );
+    // logUserEvents(C.API_CALL,C.SUCCESS,res)
     return res.data;
   } catch (err) {
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,err)
     console.log(err);
     return null;
   }
@@ -203,8 +220,10 @@ export const getSubmissionXML = async (form, prefillXML, imageUrls) => {
       },
       { headers: {} }
     );
+    logUserEvents(C.API_CALL,C.SUCCESS,res)
     return res.data;
   } catch (err) {
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,err)
     console.log(err);
     return null;
   }
@@ -218,8 +237,10 @@ export const getRandomOsceFormsTeacher = async (type) => {
     const res = await axios.get(
       `${ENKETO_MANAGER_URL}/osceFormTeachers/${type}/${year}`
     );
+    logUserEvents(C.API_CALL,C.SUCCESS,res)
     return res.data;
   } catch (err) {
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,err)
     console.log(err);
     return err;
   }
@@ -231,8 +252,10 @@ export const getRandomOsceForm = async (type, year, speciality) => {
       ? `${ENKETO_MANAGER_URL}/osceForm/${type}/${year}/${speciality}`
       : `${ENKETO_MANAGER_URL}/osceForm/${type}/${year}`;
     const res = await axios.get(url);
+    logUserEvents(C.API_CALL,C.SUCCESS,res)
     return res.data;
   } catch (err) {
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,err)
     console.log(err);
     return err;
   }
@@ -256,8 +279,8 @@ export const createUser = async (data) => {
     const userRes = await axios.post(BASE_URL + "signup", body, {
       headers: { "x-application-id": applicationId },
     });
-
-    if (userRes?.data?.responseCode === "OK") {
+    logUserEvents(C.API_CALL,C.SUCCESS,userRes)
+    if (userRes?.data?.responseCode === "OK") { 
       return userRes.data;
     } else if (userRes?.data?.status != 200) {
       const errorStrings = [];
@@ -273,6 +296,7 @@ export const createUser = async (data) => {
     Object.keys(errors).forEach((key) => {
       errorStrings.push(errors[key]?.[0]?.message);
     });
+    logUserEvents(C.API_ERROR_RESPONSE,C.ERROR,error)
     return (
       errorStrings.join(". \n") ||
       "An error occured while creating user. Try again"

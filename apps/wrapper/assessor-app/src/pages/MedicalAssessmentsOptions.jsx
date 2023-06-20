@@ -6,6 +6,8 @@ import { StateContext } from "../App";
 import { getAssessmentStatus, getMedicalAssessments } from "../api";
 import ROUTE_MAP from "../routing/routeMap";
 import { getCookie } from "../utils";
+import { logUserEvents } from "../utils/captureUserEvent";
+import { constants as C} from "../utils/constants";
 
 const MedicalAssessmentsOptions = () => {
   const { state, setState } = useContext(StateContext);
@@ -108,6 +110,7 @@ const MedicalAssessmentsOptions = () => {
               text="Nursing"
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => handleNavigation(ROUTE_MAP.nursing_options)}
+              userEventMessage={'navigate to: '+ROUTE_MAP.nursing_options}
             />
           }
           {(state?.todayAssessment?.specialization?.includes("PARAMEDICAL") || state?.todayAssessment?.specialization?.includes("Paramedical")) &&
@@ -115,6 +118,7 @@ const MedicalAssessmentsOptions = () => {
               text="Paramedical"
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => handleNavigation(ROUTE_MAP.paramedical_options)}
+              userEventMessage={'navigate to: '+ROUTE_MAP.paramedical_options}
             />
           }
 
@@ -165,9 +169,11 @@ const MedicalAssessmentsOptions = () => {
               css={state?.userData?.filledForms?.["form_anm_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => {
-                if (!state?.userData?.filledForms?.["form_anm_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_anm_general");
+                if (!state?.userData?.filledForms?.["form_anm_general"]){
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.otherforms_param_formName + "form_anm_general")
+                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_anm_general");}
                 else {
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                   setError(
                     "You've already filled this asessment for today"
                   );
@@ -182,9 +188,11 @@ const MedicalAssessmentsOptions = () => {
               css={state?.userData?.filledForms?.["form_bsc_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => {
-                if (!state?.userData?.filledForms?.["form_bsc_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_bsc_general");
+                if (!state?.userData?.filledForms?.["form_bsc_general"]){
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.otherforms_param_formName + "form_bsc_general")
+                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_bsc_general");}
                 else {
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                   setError(
                     "You've already filled this asessment for today"
                   );
@@ -199,9 +207,11 @@ const MedicalAssessmentsOptions = () => {
               css={state?.userData?.filledForms?.["form_gnm_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => {
-                if (!state?.userData?.filledForms?.["form_gnm_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_gnm_general");
+                if (!state?.userData?.filledForms?.["form_gnm_general"]){
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.otherforms_param_formName + "form_gnm_general")
+                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_gnm_general");}
                 else {
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                   setError(
                     "You've already filled this asessment for today"
                   );
@@ -216,9 +226,11 @@ const MedicalAssessmentsOptions = () => {
               css={state?.userData?.filledForms?.["form_msc_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => {
-                if (!state?.userData?.filledForms?.["form_msc_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_msc_general");
+                if (!state?.userData?.filledForms?.["form_msc_general"]){
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.otherforms_param_formName + "form_msc_general")
+                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_msc_general");}
                 else {
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                   setError(
                     "You've already filled this asessment for today"
                   );
@@ -234,9 +246,11 @@ const MedicalAssessmentsOptions = () => {
               css={state?.userData?.filledForms?.["form_pbbsc_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => {
-                if (!state?.userData?.filledForms?.["form_pbbsc_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_pbbsc_general");
+                if (!state?.userData?.filledForms?.["form_pbbsc_general"]){
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"navigate to: "+ROUTE_MAP.otherforms_param_formName + "form_pbbsc_general")
+                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_pbbsc_general");}
                 else {
+                  logUserEvents(C.BUTTON_CLICK,C.INFO,"You've already filled this asessment for today")
                   setError(
                     "You've already filled this asessment for today"
                   );

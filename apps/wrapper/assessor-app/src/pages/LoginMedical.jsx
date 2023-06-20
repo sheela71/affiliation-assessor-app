@@ -7,6 +7,8 @@ import Button from "../components/Button";
 
 import { loginMedical } from "../api";
 import { setCookie } from "../utils";
+import { logUserEvents } from "../utils/captureUserEvent";
+import { constants as C } from "../utils/constants";
 
 const LoginMedical = ({ handleStepChangeForLogin }) => {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
 
   const handleLogin = async () => {
     if (!username || !password) {
+      logUserEvents(C.BUTTON_CLICK,C.INFO,"Either username or password is missing")
       setError("Either username or password is missing");
       setTimeout(() => {
         setError("");
@@ -111,6 +114,7 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
           text={"Reset Password"}
           styles="w-80 lg:w-[70%] bg-white border-[#DBDBDB] border-1 text-[#535461] hover:text-[#535461] mx-auto mt-2"
           onClick={() => navigate(ROUTE_MAP.forgot_password)}
+          userEventMessage="Navigate to Reset Password"
         />
 
         <div className="text-[#535461] w-80 mx-auto text-[16px] text-center">By continuing you agree to our <Link to='/' className="text-blue-600/100">Terms and Conditions</Link></div>

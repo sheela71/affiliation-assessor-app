@@ -60,6 +60,7 @@ const HospitalOptions = () => {
           text="Basic Information"
           css={state?.userData?.filledForms?.["hospital_basic_information"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
           styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
+          userEventMessage="Basic Information"
           onClick={() => {
             if (!state?.userData?.filledForms?.["hospital_basic_information"])
               handleNavigation(ROUTE_MAP.otherforms_param_formName + "hospital_basic_information");
@@ -76,6 +77,7 @@ const HospitalOptions = () => {
           text="Clinical Facilities"
           css={state?.userData?.filledForms?.["hospital_clinical_facilities"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
           styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
+          userEventMessage="Clinical Facilities"
           onClick={() => {
             if (!state?.userData?.filledForms?.["hospital_clinical_facilities"])
               handleNavigation(ROUTE_MAP.otherforms_param_formName + "hospital_clinical_facilities");
@@ -92,6 +94,7 @@ const HospitalOptions = () => {
           text="Community Postings"
           css={state?.userData?.filledForms?.["hospital_community_postings"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
           styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
+          userEventMessage="Community Postings"
           onClick={() => {
             if (!state?.userData?.filledForms?.["hospital_community_postings"])
               handleNavigation(ROUTE_MAP.otherforms_param_formName + "hospital_community_postings");

@@ -278,6 +278,7 @@ const AssessmentType = () => {
                               css={{ fontSize: "16px" }}
                               text={level}
                               onClick={() => setActiveButtonValue(level)}
+                              userEventMessage="select course level"
                             ></Button>
                           ))}
                         </div>

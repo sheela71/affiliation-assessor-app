@@ -669,7 +669,7 @@ const FormsOverview = () => {
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <div>
-              <h1 className="text-2xl font-medium">Manage Forms</h1>
+              <h1 className="text-xl font-semibold">Manage Forms</h1>
             </div>
           </div>
           <div className="flex flex-col gap-4">

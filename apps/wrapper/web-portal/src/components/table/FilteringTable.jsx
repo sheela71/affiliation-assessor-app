@@ -194,9 +194,7 @@ const FilteringTable = (props) => {
             ))}
           </thead>
 
-          <tbody
-           {...getTableBodyProps()}
-          >
+          <tbody {...getTableBodyProps()}>
             {page?.map((row, index) => {
               prepareRow(row);
               return (
@@ -245,85 +243,92 @@ const FilteringTable = (props) => {
       </div>
 
       {props.pagination && (
-        <div className="flex flex-row font-normal text-[16px] py-8 gap-8">
-          <div className="flex flex-row flex-grow gap-12 items-center">
-            <div className="font-bold">
-              Total number of record(s): {totalCount}
+        <div className="flex flex-col">
+          {!totalCount && (
+            <div className="flex justify-center my-4 border-[1px] text-xl p-4 bg-[#f9f9f9]">
+              No data
+            </div>
+          )}
+          <div className="flex flex-row font-normal text-[16px] py-8 gap-8">
+            <div className="flex flex-row flex-grow gap-12 items-center">
+              <div className="font-bold">
+                Total number of record(s): {totalCount}
+              </div>
+
+              <div className="font-bold">
+                Page: {pageIndex + 1} of {totalPageCount}
+              </div>
             </div>
 
-            <div className="font-bold">
-              Page: {pageIndex + 1} of {totalPageCount}
+            <div className="flex flex-row gap-6">
+              <button
+                className="px-3 text-gray-300 border bg-blue-700 font-medium rounded-[4px] text-white"
+                onClick={() => {
+                  setPaginationInfo((prevState) => ({
+                    ...prevState,
+
+                    offsetNo: 0,
+                  }));
+                }}
+                disabled={!canPreviousPage}
+              >
+                {"<<"}
+              </button>
+
+              <button
+                className="border text-gray-300 bg-blue-700 w-[140px] h-[40px] font-medium rounded-[4px] text-white"
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+              >
+                Previous
+              </button>
+
+              <select
+                className="border text-gray-300 p-2 bg-blue-700 w-[140px] h-[40px] font-medium rounded-[4px] text-white"
+                value={pageSize}
+                onChange={(e) => {
+                  setPaginationInfo((prevState) => ({
+                    ...prevState,
+
+                    limit: Number(e.target.value),
+
+                    offsetNo: 0,
+                  }));
+
+                  setPageSize(Number(e.target.value));
+                }}
+              >
+                {[10, 25, 50].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                className="border text-gray-300 bg-blue-700 w-[140px] h-[40px] font-medium rounded-[4px] text-white"
+                onClick={() => nextPage()}
+                disabled={!canNextPage}
+              >
+                Next
+              </button>
+
+              <button
+                className="px-3 text-gray-300 border bg-blue-700 font-medium rounded-[4px] text-white"
+                onClick={() => {
+                  setPaginationInfo((prevState) => ({
+                    ...prevState,
+
+                    offsetNo: pageSize * (totalPageCount - 1),
+                  }));
+
+                  setPageIndex(totalPageCount - 1);
+                }}
+                disabled={!canNextPage}
+              >
+                {">>"}
+              </button>
             </div>
-          </div>
-
-          <div className="flex flex-row gap-6">
-            <button
-              className="px-3 text-gray-300 border bg-blue-700 font-medium rounded-[4px] text-white"
-              onClick={() => {
-                setPaginationInfo((prevState) => ({
-                  ...prevState,
-
-                  offsetNo: 0,
-                }));
-              }}
-              disabled={!canPreviousPage}
-            >
-              {"<<"}
-            </button>
-
-            <button
-              className="border text-gray-300 bg-blue-700 w-[140px] h-[40px] font-medium rounded-[4px] text-white"
-              onClick={() => previousPage()}
-              disabled={!canPreviousPage}
-            >
-              Previous
-            </button>
-
-            <select
-              className="border text-gray-300 p-2 bg-blue-700 w-[140px] h-[40px] font-medium rounded-[4px] text-white"
-              value={pageSize}
-              onChange={(e) => {
-                setPaginationInfo((prevState) => ({
-                  ...prevState,
-
-                  limit: Number(e.target.value),
-
-                  offsetNo: 0,
-                }));
-
-                setPageSize(Number(e.target.value));
-              }}
-            >
-              {[10, 25, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
-
-            <button
-              className="border text-gray-300 bg-blue-700 w-[140px] h-[40px] font-medium rounded-[4px] text-white"
-              onClick={() => nextPage()}
-              disabled={!canNextPage}
-            >
-              Next
-            </button>
-
-            <button
-              className="px-3 text-gray-300 border bg-blue-700 font-medium rounded-[4px] text-white"
-              onClick={() => {
-                setPaginationInfo((prevState) => ({
-                  ...prevState,
-
-                  offsetNo: pageSize * (totalPageCount - 1),
-                }));
-
-                setPageIndex(totalPageCount - 1);
-              }}
-              disabled={!canNextPage}
-            >
-              {">>"}
-            </button>
           </div>
         </div>
       )}

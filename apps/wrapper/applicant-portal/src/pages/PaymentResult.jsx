@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button } from "../components";
@@ -8,17 +8,31 @@ import { RxCrossCircled } from "react-icons/rx";
 import { FaAngleRight } from "react-icons/fa";
 
 import APPLICANT_ROUTE_MAP from "../routes/ApplicantRoute";
+import { getCookie} from "../utils";
 import Header from "../components/Header";
+import { applicantService } from "../services";
 
 export default function PaymentResult() {
   let [params, setParams] = useSearchParams();
-
+  const formId = getCookie("formId");
   const navigate = useNavigate();
 
   const goBack = () => {
     navigate(APPLICANT_ROUTE_MAP.dashboardModule.my_applications);
   };
 
+  const  applicantTransaction= async () => {
+    const formData = {"transaction_details":[{"id": params.get("transaction_id"),"form_id": formId}]}
+    const formsResponse = await applicantService.transactionStatus(formData);
+   await applicantService.updatePaymentStatus({"form_id":formId,"payment_status":params.get("resp")=== "success" ? "Paid" : "Failed"})
+  };
+
+  useEffect(() => {
+    if (params.get("transaction_id")) {
+     applicantTransaction()
+    }
+  }, []);
+  
   return (
     <>
       <Header />

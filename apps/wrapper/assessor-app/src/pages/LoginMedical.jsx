@@ -5,7 +5,7 @@ import ROUTE_MAP from "../routing/routeMap";
 import CommonLayout from "../components/CommonLayout";
 import Button from "../components/Button";
 
-import { loginMedical } from "../api";
+import { login } from "../api";
 import { setCookie } from "../utils";
 
 const LoginMedical = ({ handleStepChangeForLogin }) => {
@@ -30,27 +30,41 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
       }, 3000);
       return;
     }
-    
-    const loginRes = await loginMedical(username, password);
 
-    if (loginRes?.params?.errMsg && loginRes.responseCode == "FAILURE") {
-      setError(loginRes?.params?.errMsg);
+    const loginRes = await login(username, password);
+    console.log("login-", loginRes.accessToken);
+    const role = loginRes?.userRepresentation?.attributes?.Role?.[0];
+    console.log(role);
+    if (loginRes?.accessToken) {
+      setCookie("userData", loginRes);
+      navigate(ROUTE_MAP.root_star);
+    }
+    if (loginRes?.errors?.length > 0) {
+      if (loginRes?.errors?.[0] === "Credentials have authorization issue") {
+        setError("Invalid Username/ Password");
+      } else {
+        setError(loginRes?.errors?.[0]);
+      }
       setTimeout(() => {
         setError("");
       }, 3000);
       return;
     }
 
-    if (loginRes.responseCode == "OK" && loginRes.result) {
-      let loggedInUser = loginRes.result.data.user;
-      setCookie("userData", loggedInUser);
-      if (userIsAdminForPortal(loggedInUser.user.registrations)) {
-        navigate(ROUTE_MAP.admin);
-      } else {
-        navigate(ROUTE_MAP.root);
-      }
-      return;
-    }
+    // if (role == "Assessor") {
+    //   setCookie("userData", loginRes?.userRepresentation);
+    //   navigate(ROUTE_MAP.root);
+    // }
+    // if (loginRes.responseCode == "OK" && loginRes.result) {
+    //   let loggedInUser = loginRes.result.data.user;
+    //   setCookie("userData", loggedInUser);
+    //   if (userIsAdminForPortal(loggedInUser.user.registrations)) {
+    //     navigate(ROUTE_MAP.admin);
+    //   } else {
+    //     navigate(ROUTE_MAP.root);
+    //   }
+    //   return;
+    // }
 
     setError("An internal server error occurred");
     setTimeout(() => {
@@ -59,27 +73,37 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
   };
 
   return (
-    <CommonLayout backFunction={handleStepChangeForLogin} backDisabled logoutDisabled>
+    <CommonLayout
+      backFunction={handleStepChangeForLogin}
+      backDisabled
+      logoutDisabled
+    >
       <div className="flex flex-col px-5 h-[calc(100vh-176px)] gap-5 overflow-y-auto">
-
         <div className="flex">
-          <img src="/assets/affiliationHome.png" className="w-[64%] m-auto lg:h-60 lg:mt-[40px]" alt="illustration" />
+          <img
+            src="/assets/affiliationHome.png"
+            className="w-[64%] m-auto lg:h-60 lg:mt-[40px]"
+            alt="illustration"
+          />
         </div>
 
         <div className="flex flex-col w-80 lg:w-[70%] animate__animated animate__fadeInDown gap-6 mx-auto">
           <div className="flex flex-col gap-2">
-            <div className="text-secondary text-[14px] font-medium">Enter Mobile number</div>
+            <div className="text-secondary text-[14px] font-medium">
+              Enter Email id
+            </div>
             <input
               type="text"
-              placeholder="Enter phone number"
+              placeholder="Enter Email id"
               className="border-2 border-primary p-3.5"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-
           <div className="flex flex-col gap-2">
-            <div className="text-secondary text-[14px] font-medium">Enter Password</div>
+            <div className="text-secondary text-[14px] font-medium">
+              Enter Password
+            </div>
             <input
               type="password"
               placeholder="Enter password"
@@ -93,13 +117,11 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
           </div>
         </div>
 
-        {
-          error && (
-            <span className="text-white animate__animated animate__headShake bg-red-500 w-80 font-medium px-4 py-3 text-center mx-auto">
-              { error }
-            </span>
-          )
-        }
+        {error && (
+          <span className="text-white animate__animated animate__headShake bg-red-500 w-80 font-medium px-4 py-3 text-center mx-auto">
+            {error}
+          </span>
+        )}
 
         <Button
           text={"Sign In"}
@@ -113,7 +135,12 @@ const LoginMedical = ({ handleStepChangeForLogin }) => {
           onClick={() => navigate(ROUTE_MAP.forgot_password)}
         />
 
-        <div className="text-[#535461] w-80 mx-auto text-[16px] text-center">By continuing you agree to our <Link to='/' className="text-blue-600/100">Terms and Conditions</Link></div>
+        <div className="text-[#535461] w-80 mx-auto text-[16px] text-center">
+          By continuing you agree to our{" "}
+          <Link to="/" className="text-blue-600/100">
+            Terms and Conditions
+          </Link>
+        </div>
       </div>
     </CommonLayout>
   );

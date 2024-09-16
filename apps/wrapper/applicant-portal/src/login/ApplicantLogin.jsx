@@ -43,40 +43,16 @@ const ApplicantLogin = () => {
 
   const login = async (data) => {
     try {
-      // const loginDetails = { username: data.email };
-      // const checkUser = await userService.login(loginDetails);
-      // console.log("user check", checkUser.data.user.email);
-      // if (checkUser.data.user.email) {
-      // console.log(checkUser.data.user.email);
       const otpRes = await userService.generateOtp({
         username: data.email,
       });
       console.log(otpRes);
       if (otpRes.data === "Sending OTP to user mail") {
         setEnableOtp(true);
-        // setPhoneNumber(data.phone);
         setEmailId(data.email);
       } else {
         console.log("Something went wrong", otpRes);
       }
-      // } else {
-      //   setToast((prevState) => ({
-      //     ...prevState,
-      //     toastOpen: true,
-      //     toastMsg: "User not registered.",
-      //     toastType: "error",
-      //   }));
-      //   setTimeout(
-      //     () =>
-      //       setToast((prevState) => ({
-      //         ...prevState,
-      //         toastOpen: false,
-      //         toastMsg: "",
-      //         toastType: "",
-      //       })),
-      //     3000
-      //   );
-      // }
     } catch (error) {
       console.log("Otp not sent due to some error", error);
       setToast((prevState) => ({
@@ -106,21 +82,6 @@ const ApplicantLogin = () => {
       };
 
       const loginRes = await userService.login(loginDetails);
-      console.log(loginRes);
-
-      // const verifyOtpReq = userService.verifyOtp(data.email, data.otp);
-      // const fusionAuthLoginReq = from(verifyOtpReq).pipe(
-      //   mergeMap((verifyOtpRes) => {
-      //     if (verifyOtpRes.data.data.Status === "Error") {
-      //       setVerifyEnteredOtp(false);
-      //     } else {
-      //       setVerifyEnteredOtp(true);
-      //       return userService.login(loginDetails);
-      //     }
-      //   })
-      // );
-
-      console.log(loginRes);
 
       const applicantDetailsRes = await applicantService.getApplicantDetails({
         user_id: loginRes.data.userRepresentation.id,
@@ -210,35 +171,6 @@ const ApplicantLogin = () => {
                       </p>
                     )}
                   </div>
-                  {/* <div className="flex flex-col gap-2">
-                    <Label
-                      htmlFor="phone"
-                      text="Mobile Number"
-                      required
-                    ></Label>
-                    <input
-                      type="phone"
-                      name="phone"
-                      id="phone"
-                      placeholder="Mobile number"
-                      {...register("phone", {
-                        required: true,
-                        pattern: /^(\+\d{1,3}[- ]?)?\d{10}$/i,
-                      })}
-                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      noValidate
-                    />
-                    {errors?.phone?.type === "required" && (
-                      <p className="text-red-500 mt-2 text-sm">
-                        This field is required
-                      </p>
-                    )}
-                    {errors?.phone?.type === "pattern" && (
-                      <p className="text-red-500 mt-2 text-sm">
-                        This is not a valid mobile number format
-                      </p>
-                    )}
-                  </div> */}
                   <Button
                     moreClass="uppercase w-full mt-7 text-white"
                     text="Get Otp"

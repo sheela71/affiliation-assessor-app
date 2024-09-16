@@ -204,7 +204,10 @@ const AllApplications = () => {
             <div className="flex flex-wrap">
               {availableForms.map((form, index) => (
                 <FormCard form={form} key={index} onApply={applyFormHandler} />
-              ))}
+              )
+              )
+              } 
+              {console.log("available forms-",availableForms)}
             </div>
           )}
         </div>

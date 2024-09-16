@@ -11,6 +11,7 @@ import {
   registerEvent,
   saveFormSubmission,
   updateFormStatus,
+  getPrefillXML,
 } from "../../api";
 import {
   getCookie,
@@ -20,6 +21,7 @@ import {
   removeItemFromLocalForage,
   getSpecificDataFromForage,
   getLocalTimeInISOFormat,
+  getFromLocalForage,
 } from "../../utils";
 
 import CommonLayout from "../../components/CommonLayout";
@@ -98,11 +100,10 @@ const GenericOdkForm = (props) => {
   });
 
   const getFormStatus = async () => {
-    const { user } = getCookie("userData");
-
+    const id = user?.userRepresentation?.id;
     const postData = {
       date: new Date().toJSON().slice(0, 10),
-      assessor_id: user.id,
+      assessor_id: id,
     };
 
     try {
@@ -133,7 +134,7 @@ const GenericOdkForm = (props) => {
           entity_id: `${parent_form_id}`,
           entity_type: "form",
           event_name: "OGA Completed",
-          remarks: `${user.firstName} ${user.lastName} has completed the On Ground Inspection Analysis`,
+          remarks: `${user?.userRepresentation?.firstName} ${user?.userRepresentation?.lasttName} has completed the On Ground Inspection Analysis`,
         });
         updateFormStatus({
           form_id: `${parent_form_id}`,
@@ -145,6 +146,25 @@ const GenericOdkForm = (props) => {
     }
   };
 
+  const getDataFromLocal = async () => {
+    const id = user?.userRepresentation?.id;
+    let formData = await getFromLocalForage(
+      `${formName}_${new Date().toISOString().split("T")[0]}`
+    );
+
+    let fileGCPPath =
+      process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
+
+    let formURI = await getPrefillXML(
+      `${fileGCPPath}`,
+      formSpec.onSuccess,
+      formData?.formData || formData?.form_data,
+      formData?.imageUrls
+    );
+
+    setEncodedFormURI(formURI);
+  };
+
   async function afterFormSubmit(e, saveFlag) {
     const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
 
@@ -152,6 +172,7 @@ const GenericOdkForm = (props) => {
       const { nextForm, formData, onSuccessData, onFailureData } = data;
       if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
         if (!previewFlag) {
+          getDataFromLocal();
           handleRenderPreview();
         } else {
           // For read-only forms, it will disable the Submit...
@@ -184,7 +205,10 @@ const GenericOdkForm = (props) => {
             new Date().toISOString().split("T")[0]
           }`;
           removeItemFromLocalForage(key);
-          setTimeout(() => navigate(`${ROUTE_MAP.thank_you}${formName}`), 2000);
+
+          setPreviewModal(false);
+          previewFlag = false;
+          setTimeout(() => navigate(`${ROUTE_MAP.thank_you}${formName}`), 1000);
         }
       }
 
@@ -256,6 +280,7 @@ const GenericOdkForm = (props) => {
   const handleRenderPreview = () => {
     setPreviewModal(true);
     previewFlag = true;
+
     setTimeout(() => {
       const iframeElem = document.getElementById("preview-enketo-form");
       if (window.location.host.includes("localhost")) {
@@ -300,20 +325,6 @@ const GenericOdkForm = (props) => {
     };
   }, []);
 
-  useEffect(() => {
-    getFormData({
-      loading,
-      scheduleId,
-      formSpec,
-      startingForm,
-      formId,
-      setData,
-      setEncodedFormSpec,
-      setEncodedFormURI,
-      isPreview,
-    });
-  }, [isPreview]);
-
   /* 
   async function fetchIframeResources(iframeUrl) {
     try {
@@ -335,7 +346,7 @@ const GenericOdkForm = (props) => {
     <>
       <CommonLayout
         {...props.commonLayoutProps}
-        formUrl={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user.user.id}`}
+        formUrl={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
         formPreview={true}
         setIsPreview={setIsPreview}
       >
@@ -346,7 +357,7 @@ const GenericOdkForm = (props) => {
                 <iframe
                   title="form"
                   id="enketo-form"
-                  src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user.user.id}`}
+                  src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
                   style={{ height: "80vh", width: "100%" }}
                 />
               </>
@@ -404,7 +415,7 @@ const GenericOdkForm = (props) => {
             <iframe
               title="form"
               id="preview-enketo-form"
-              src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user.user.id}`}
+              src={`${ENKETO_URL}/preview?formSpec=${encodedFormSpec}&xform=${encodedFormURI}&userId=${user?.userRepresentation?.id}`}
               style={{ height: "80vh", width: "100%" }}
             />
           </div>

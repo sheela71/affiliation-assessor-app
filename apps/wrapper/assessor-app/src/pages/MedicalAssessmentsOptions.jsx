@@ -34,7 +34,7 @@ const MedicalAssessmentsOptions = () => {
           ...state?.userData,
           filledForms: { ...state?.filledForms, ...filledForms },
         },
-      }
+      };
     });
     setLoading(false);
   };
@@ -57,23 +57,23 @@ const MedicalAssessmentsOptions = () => {
             latitude: ass.institute.latitude,
             longitude: ass.institute.longitude,
           },
-        }
+        };
       });
     }
   };
 
   useEffect(() => {
-    const {
-      user: { registrations },
-    } = getCookie("userData");
-    const roles = registrations[0]?.roles[0];
-    setRole(() => roles);
+    // const {
+    //   user: { registrations },
+    // } = getCookie("userData");
+    // const roles = registrations[0]?.roles[0];
+    // setRole(() => roles);
   }, []);
 
   const getData = async () => {
     await getFilledAssessmentStatus();
     await getTodayAssessments();
-  }
+  };
 
   useEffect(() => {
     getData();
@@ -103,20 +103,24 @@ const MedicalAssessmentsOptions = () => {
           </p>
 
           {/* For Medical Assessor */}
-          {(state?.todayAssessment?.specialization?.includes("NURSING") || state?.todayAssessment?.specialization?.includes("Nursing")) &&
+          {(state?.todayAssessment?.specialization?.includes("NURSING") ||
+            state?.todayAssessment?.specialization?.includes("Nursing")) && (
             <Button
               text="Nursing"
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => handleNavigation(ROUTE_MAP.nursing_options)}
             />
-          }
-          {(state?.todayAssessment?.specialization?.includes("PARAMEDICAL") || state?.todayAssessment?.specialization?.includes("Paramedical")) &&
+          )}
+          {(state?.todayAssessment?.specialization?.includes("PARAMEDICAL") ||
+            state?.todayAssessment?.specialization?.includes(
+              "Paramedical"
+            )) && (
             <Button
               text="Paramedical"
               styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
               onClick={() => handleNavigation(ROUTE_MAP.paramedical_options)}
             />
-          }
+          )}
 
           {/* For Non Medical Assessor */}
           {/* {(state?.todayAssessment?.specialization?.includes("NURSING") || state?.todayAssessment?.specialization?.includes("Nursing")) && role == 'Non-Medical' &&
@@ -159,92 +163,122 @@ const MedicalAssessmentsOptions = () => {
           } */}
 
           {/* Common for both assessors */}
-          {!loading && role == 'Medical' && state?.todayAssessment?.courses?.includes("ANM") &&
-            <Button
-              text="ANM Form"
-              css={state?.userData?.filledForms?.["form_anm_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
-              styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
-              onClick={() => {
-                if (!state?.userData?.filledForms?.["form_anm_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_anm_general");
-                else {
-                  setError(
-                    "You've already filled this asessment for today"
-                  );
-                  setTimeout(() => setError(""), 3000);
+          {!loading &&
+            role == "Medical" &&
+            state?.todayAssessment?.courses?.includes("ANM") && (
+              <Button
+                text="ANM Form"
+                css={
+                  state?.userData?.filledForms?.["form_anm_general"]
+                    ? { background: "#fdc8a2", border: "1px solid #fdc8a2" }
+                    : {}
                 }
-              }}
-            />
-          }
-          {!loading && role == 'Medical' && state?.todayAssessment?.courses?.includes("BSC") &&
-            <Button
-              text="BSC Form"
-              css={state?.userData?.filledForms?.["form_bsc_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
-              styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
-              onClick={() => {
-                if (!state?.userData?.filledForms?.["form_bsc_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_bsc_general");
-                else {
-                  setError(
-                    "You've already filled this asessment for today"
-                  );
-                  setTimeout(() => setError(""), 3000);
+                styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
+                onClick={() => {
+                  if (!state?.userData?.filledForms?.["form_anm_general"])
+                    handleNavigation(
+                      ROUTE_MAP.otherforms_param_formName + "form_anm_general"
+                    );
+                  else {
+                    setError("You've already filled this asessment for today");
+                    setTimeout(() => setError(""), 3000);
+                  }
+                }}
+              />
+            )}
+          {!loading &&
+            role == "Medical" &&
+            state?.todayAssessment?.courses?.includes("BSC") && (
+              <Button
+                text="BSC Form"
+                css={
+                  state?.userData?.filledForms?.["form_bsc_general"]
+                    ? { background: "#fdc8a2", border: "1px solid #fdc8a2" }
+                    : {}
                 }
-              }}
-            />
-          }
-          {!loading && role == 'Medical' && state?.todayAssessment?.courses?.includes("GNM") &&
-            <Button
-              text="GNM Form"
-              css={state?.userData?.filledForms?.["form_gnm_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
-              styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
-              onClick={() => {
-                if (!state?.userData?.filledForms?.["form_gnm_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_gnm_general");
-                else {
-                  setError(
-                    "You've already filled this asessment for today"
-                  );
-                  setTimeout(() => setError(""), 3000);
+                styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
+                onClick={() => {
+                  if (!state?.userData?.filledForms?.["form_bsc_general"])
+                    handleNavigation(
+                      ROUTE_MAP.otherforms_param_formName + "form_bsc_general"
+                    );
+                  else {
+                    setError("You've already filled this asessment for today");
+                    setTimeout(() => setError(""), 3000);
+                  }
+                }}
+              />
+            )}
+          {!loading &&
+            role == "Medical" &&
+            state?.todayAssessment?.courses?.includes("GNM") && (
+              <Button
+                text="GNM Form"
+                css={
+                  state?.userData?.filledForms?.["form_gnm_general"]
+                    ? { background: "#fdc8a2", border: "1px solid #fdc8a2" }
+                    : {}
                 }
-              }}
-            />
-          }
-          {!loading && role == 'Medical' && state?.todayAssessment?.courses?.includes("MSC") &&
-            <Button
-              text="MSC Form"
-              css={state?.userData?.filledForms?.["form_msc_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
-              styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
-              onClick={() => {
-                if (!state?.userData?.filledForms?.["form_msc_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_msc_general");
-                else {
-                  setError(
-                    "You've already filled this asessment for today"
-                  );
-                  setTimeout(() => setError(""), 3000);
+                styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
+                onClick={() => {
+                  if (!state?.userData?.filledForms?.["form_gnm_general"])
+                    handleNavigation(
+                      ROUTE_MAP.otherforms_param_formName + "form_gnm_general"
+                    );
+                  else {
+                    setError("You've already filled this asessment for today");
+                    setTimeout(() => setError(""), 3000);
+                  }
+                }}
+              />
+            )}
+          {!loading &&
+            role == "Medical" &&
+            state?.todayAssessment?.courses?.includes("MSC") && (
+              <Button
+                text="MSC Form"
+                css={
+                  state?.userData?.filledForms?.["form_msc_general"]
+                    ? { background: "#fdc8a2", border: "1px solid #fdc8a2" }
+                    : {}
                 }
-              }}
-            />
-          }
+                styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
+                onClick={() => {
+                  if (!state?.userData?.filledForms?.["form_msc_general"])
+                    handleNavigation(
+                      ROUTE_MAP.otherforms_param_formName + "form_msc_general"
+                    );
+                  else {
+                    setError("You've already filled this asessment for today");
+                    setTimeout(() => setError(""), 3000);
+                  }
+                }}
+              />
+            )}
 
-          {!loading && role == 'Medical' && state?.todayAssessment?.courses?.includes("PBBSC") &&
-            <Button
-              text="PBBSC Form"
-              css={state?.userData?.filledForms?.["form_pbbsc_general"] ? { background: '#fdc8a2', border: '1px solid #fdc8a2' } : {}}
-              styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
-              onClick={() => {
-                if (!state?.userData?.filledForms?.["form_pbbsc_general"])
-                  handleNavigation(ROUTE_MAP.otherforms_param_formName + "form_pbbsc_general");
-                else {
-                  setError(
-                    "You've already filled this asessment for today"
-                  );
-                  setTimeout(() => setError(""), 3000);
+          {!loading &&
+            role == "Medical" &&
+            state?.todayAssessment?.courses?.includes("PBBSC") && (
+              <Button
+                text="PBBSC Form"
+                css={
+                  state?.userData?.filledForms?.["form_pbbsc_general"]
+                    ? { background: "#fdc8a2", border: "1px solid #fdc8a2" }
+                    : {}
                 }
-              }}
-            />
-          }
+                styles={`lg:w-[70%] animate__animated animate__fadeInDown`}
+                onClick={() => {
+                  if (!state?.userData?.filledForms?.["form_pbbsc_general"])
+                    handleNavigation(
+                      ROUTE_MAP.otherforms_param_formName + "form_pbbsc_general"
+                    );
+                  else {
+                    setError("You've already filled this asessment for today");
+                    setTimeout(() => setError(""), 3000);
+                  }
+                }}
+              />
+            )}
           {error && (
             <span className="text-white animate__animated animate__headShake bg-red-500 font-medium px-4 py-3 mt-5 text-center ">
               {error}

@@ -223,10 +223,7 @@ function BulkUploadUsersModal({ closeBulkUploadUsersModal }) {
       //   "access_token",
       //   "Bearer " + accessTokenResponse?.data?.access_token
       // );
-      setCookie(
-        "access_token",
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA"
-      );
+      setCookie("access_token", process.env.REACT_APP_AUTH_TOKEN);
 
       //keycloak API call
       selectedRows.map(async (item) => {
@@ -252,7 +249,7 @@ function BulkUploadUsersModal({ closeBulkUploadUsersModal }) {
         };
 
         const keycloakRes = await createBulkUsersKeyCloak(postDataKeyCloak);
-        console.log("keycloak response - ", keycloakRes)
+        console.log("keycloak response - ", keycloakRes);
         if (keycloakRes?.data) {
           if (item.values.role === "Assessor") {
             postDataHasura["assessors"].push({

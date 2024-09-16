@@ -8,6 +8,7 @@ import { Card, Button, Label, Input } from "./../../components";
 import { MdEventBusy } from "react-icons/md";
 import axios from "axios";
 import { getPrefillXML } from "../../api/formApi";
+import { getCookie } from "../../utils";
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 
@@ -28,8 +29,9 @@ const UploadForm = ({
   };
 
   const handleChange = (e) => {
-    const fileUploaded = e.target.files[0];
-    setFileName(
+    console.log("e.target.files",e.target.files[0])
+    const fileUploaded = e?.target?.files[0];    
+      setFileName(
       fileUploaded.name.substring(0, fileUploaded.name.lastIndexOf("."))
     );
     handleFile(fileUploaded);
@@ -54,7 +56,8 @@ const UploadForm = ({
     element.click();
   };
 
-  const userId = "427d473d-d8ea-4bb3-b317-f230f1c9b2f7";
+  const user_details = getCookie("userData");
+  const userId = user_details?.userRepresentation?.id;
   const formSpec = {
     skipOnSuccessMessage: true,
     prefill: {},
@@ -74,26 +77,23 @@ const UploadForm = ({
       },
     },
   };
-  // const formSpec = formData?.file_name?.split(".")[0]; //passing form name
 
   const fetchFormData = async () => {
     const res = await axios.get(formData?.path, { responseType: "text" });
+    console.log("res",res)
     formURI = await getPrefillXML(
       formData?.path,
       formSpec.onSuccess
       // res.data //tried passing xmlData here
     );
-    console.log("formURI----->", formURI);
     setEncodedFormURI(formURI);
   };
 
   const handleFormPreview = async () => {
-    console.log("inside handle preview- ", formData);
     await fetchFormData();
     let src = `${ENKETO_URL}/preview?formSpec=${encodeURI(
       JSON.stringify(formSpec)
     )}&xform=${formURI}&userId=${userId}`;
-    console.log("Preview Url", src);
     window.open(src, "_blank");
   };
 
@@ -158,9 +158,6 @@ const UploadForm = ({
                     style={{ display: "none" }}
                   />
                   <Button
-                    // moreClass="text-white w-full px-6"
-                    // disabled={formStatus=="Published" || formStatus=="Unpublished"}
-
                     moreClass={`${
                       formStatus == "Published" || formStatus == "Unpublished"
                         ? "cursor-not-allowed border w-full px-6 border-gray-500 bg-white text-gray-500 "

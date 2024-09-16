@@ -13,6 +13,8 @@ export default function NocIssued({ notification }) {
   const navigate = useNavigate();
   let { round } = useParams();
 
+  console.log(round)
+
   const goBack = () => {
     navigate(-1);
   };
@@ -35,7 +37,9 @@ export default function NocIssued({ notification }) {
               </span>
             </Link>
             <FaAngleRight className="text-[16px]" />
-            <span className="text-gray-500 uppercase">NOC issued</span>
+            <span className="text-gray-500 uppercase">
+              {(round === "1") ? "NOC issued" : "Certificate issued"} 
+              </span>
           </div>
         </div>
       </div>
@@ -45,8 +49,7 @@ export default function NocIssued({ notification }) {
           <FaThumbsUp className="text-green-700 w-full text-2xl" />
         </div>
         <h2 className="text-xl font-semibold m-2">
-          {(round === 1) ? "NOC has been issued" : "Certificate has been issued"}
-          
+          {(round === "1") ? "NOC has been issued" : "Certificate has been issued"}                   
           </h2>
         <div className="text-m">
           We will review your application and proceed with next steps.

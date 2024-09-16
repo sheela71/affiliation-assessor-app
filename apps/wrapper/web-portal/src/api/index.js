@@ -325,8 +325,7 @@ export const createBulkUsersKeyCloak = async (postData) => {
       headers: {
         "Content-Type": "application/json",
         // "Authorization": getCookie("access_token")
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA",
+        Authorization: process.env.REACT_APP_AUTH_TOKEN,
       },
     }
   );
@@ -342,8 +341,7 @@ export const editUserKeycloak = async (postData) => {
       headers: {
         "Content-Type": "application/json",
         // "Authorization": getCookie("access_token")
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA",
+        Authorization: process.env.REACT_APP_AUTH_TOKEN,
       },
     }
   );
@@ -466,7 +464,10 @@ export const updateFormStatus = async (postData) => {
   return res;
 };
 
-export const updatePaymentStatus = async(postData) =>{
-  const res = await adminCustomPost.put(API_URL.desktopAnalysis.updatePaymentStatus,postData);
+export const updatePaymentStatus = async (postData) => {
+  const res = await adminCustomPost.put(
+    API_URL.desktopAnalysis.updatePaymentStatus,
+    postData
+  );
   return res;
-}
+};

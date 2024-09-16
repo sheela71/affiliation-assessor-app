@@ -211,7 +211,7 @@ export const DesktopAnalysisFilters = ({
   selectedRound,
 }) => {
   const [showCalendar, setShowCalendar] = useState(false);
-  const [buttonText, setButtonText] = useState("Published On");
+  const [buttonText, setButtonText] = useState("Submitted On");
   const [filters, setFilters] = useState({
     condition: {
       assessor_id: { _is_null: true },
@@ -287,7 +287,7 @@ export const DesktopAnalysisFilters = ({
       submitted_on: null,
       review_status: null,
     });
-    setButtonText("Published On");
+    setButtonText("Submitted On");
     setFilters({
       condition: {
         assessor_id: { _is_null: true },
@@ -338,7 +338,7 @@ export const DesktopAnalysisFilters = ({
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 px-8"
           onClick={() => setShowCalendar(true)}
         >
-          {buttonText.includes("Published")
+          {buttonText.includes("Submitted")
             ? buttonText
             : readableDate(buttonText)}
         </button>
@@ -382,7 +382,7 @@ export const OnGroundInspectionFilters = ({
   selectedRound,
 }) => {
   const [showCalendar, setShowCalendar] = useState(false);
-  const [buttonText, setButtonText] = useState("Published On");
+  const [buttonText, setButtonText] = useState("Submitted On");
   const [filters, setFilters] = useState({ condition: {} });
   const [state, setState] = useState({
     role: null,
@@ -432,7 +432,7 @@ export const OnGroundInspectionFilters = ({
       submitted_on: null,
       review_status: null,
     });
-    setButtonText("Published On");
+    setButtonText("Submitted On");
     setFilters({ condition: {} });
     setPaginationInfo((prevState) => ({
       ...prevState,
@@ -446,7 +446,7 @@ export const OnGroundInspectionFilters = ({
 
   return (
     <div className="flex flex-grow text-gray-700 dark:text-gray-400 gap-8">
-      <div className="flex">
+      {/* <div className="flex">
         <Select
           name="role"
           id="role"
@@ -457,17 +457,17 @@ export const OnGroundInspectionFilters = ({
           label="Assessor"
           className="bg-gray-50"
         >
-          {/* <Option value="">--Select Assessor--</Option> */}
+          <Option value="">--Select Assessor--</Option>
           <Option value="admin">Admin</Option>
           <Option value="applicant">Applicant</Option>
         </Select>
-      </div>
+      </div> */}
       <div className="flex">
         <button
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-8 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           onClick={() => setShowCalendar(true)}
         >
-          {buttonText.includes("Published")
+          {buttonText.includes("Submitted")
             ? buttonText
             : readableDate(buttonText)}
         </button>

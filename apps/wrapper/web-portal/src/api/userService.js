@@ -73,12 +73,11 @@ accessTokenAxiosService.interceptors.response.use(
 );
 
 const generateOtp = (postData) => {
-  return axios.post(`${BASE_URL}${API_URL.LOGIN.GENERATE_OTP}`, postData,{
+  return axios.post(`${BASE_URL}${API_URL.LOGIN.GENERATE_OTP}`, postData, {
     headers: {
       "Content-Type": "application/json",
       // "Authorization": getCookie("access_token")
-      "Authorization":
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA",
+      Authorization: process.env.REACT_APP_AUTH_TOKEN,
     },
   });
 };
@@ -88,8 +87,7 @@ const signup = (userDetails) => {
     headers: {
       "Content-Type": "application/json",
       // "Authorization": getCookie("access_token")
-      "Authorization":
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA",
+      Authorization: process.env.REACT_APP_AUTH_TOKEN,
     },
   });
 };
@@ -99,7 +97,7 @@ const login = (userDetails) => {
     headers: {
       "Content-Type": "application/json",
       // "Authorization": getCookie("access_token")
-      "Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA",
+      Authorization: process.env.REACT_APP_AUTH_TOKEN,
     },
   });
 };
@@ -112,21 +110,18 @@ const getAccessToken = (postData) => {
       headers: {
         "Content-Type": "application/json",
         // "Authorization": getCookie("access_token")
-        "Authorization":
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA",
+        Authorization: process.env.REACT_APP_AUTH_TOKEN,
       },
     }
   );
 };
-
 
 const deleteUsers = (postData) => {
   return axios.post(`${BASE_URL}${API_URL.DELETE.DELETE_USER}`, postData, {
     headers: {
       "Content-Type": "application/json",
       // "Authorization": getCookie("access_token")
-      "Authorization":
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA",
+      Authorization: process.env.REACT_APP_AUTH_TOKEN,
     },
   });
 };

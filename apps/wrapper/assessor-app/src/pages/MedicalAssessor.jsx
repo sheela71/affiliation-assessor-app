@@ -22,12 +22,13 @@ const MedicalAssessor = () => {
     navigate(route);
   };
 
-  const getAssessorDetails = async (number) => {
+  const getAssessorDetails = async (email) => {
     const postData = {
-      number: number,
+      email: email,
     };
 
     try {
+      console.log(postData);
       const res = await getAssessor(postData);
       setData(res?.data?.assessors[0]);
       const requiredData = {
@@ -35,15 +36,16 @@ const MedicalAssessor = () => {
       };
       setToLocalForage("required_data", requiredData);
     } catch (error) {
+      console.log("here");
       alert(error);
     }
   };
 
   useEffect(() => {
-    const { user } = getCookie("userData");
-    const number = user?.mobilePhone;
-    getAssessorDetails(number);
-    const roles = user?.registrations[0]?.roles[0];
+    const user = getCookie("userData");
+    const email = user?.userRepresentation?.email;
+    getAssessorDetails(email);
+    const roles = user?.userRepresentation?.attributes?.Role?.[0];
     setRole(roles);
   }, []);
 
@@ -85,11 +87,11 @@ const MedicalAssessor = () => {
               styles="w-full bg-white font-normal border-[1px] border-[#DBDBDB] text-[#535461] animate__animated animate__fadeInDown"
               onClick={() => handleClick(ROUTE_MAP.past_inspections)}
             />
-            {/* <Button
+            <Button
               text="Pending Inspections"
               styles="w-full bg-white font-normal border-[1px] border-red-300 text-red-300 animate__animated animate__fadeInDown"
               onClick={() => handleClick(ROUTE_MAP.pending_inspections)}
-            /> */}
+            />
           </div>
         </div>
 

@@ -7,45 +7,9 @@ import { useNavigate } from "react-router-dom";
 const ApplicationCard = (props) => {
   let formName = props?.application?.course?.course_name?.trim() || "NA";
 
-  const handlePayment = async () => {
-    const instituteDetails = getCookie("institutes");
-    const instituteId = instituteDetails?.[0]?.id;
-    const postData = {
-      endpoint: "https://eazypayuat.icicibank.com/EazyPG",
-      returnUrl: "https://payment.uphrh.in/api/v1/user/payment",
-      paymode: "9",
-      secret: "",
-      merchantId: "600547",
-      mandatoryFields: {
-        referenceNo: generate_uuidv4(),
-        submerchantId: "45",
-        transactionAmount: "10",
-        invoiceId: "x1",
-        invoiceDate: "x",
-        invoiceTime: "x",
-        merchantId: "x",
-        payerType: "Institute",
-        payerId: instituteId,
-        transactionId: "x",
-        transactionDate: "x",
-        transactionTime: "x",
-        transactionStatus: "x",
-        refundId: "x",
-        refundDate: "x",
-        refundTime: "x",
-        refundStatus: "x",
-      },
-      optionalFields: "",
-    };
-    try {
-      const paymentRes = await applicantService.initiatePayment(postData);
-      await window.open(paymentRes?.data?.redirectUrl);
-    } catch (error) {
-    }
-  };
-
+  
   return (
-    <Card moreClass="flex flex-col border-gray-100 m-3 gap-5 w-[300px] border-[1px] drop-shadow justify-between">
+    <Card moreClass="flex flex-col border-gray-100 m-3 gap-5 w-[320px] border-[1px] drop-shadow justify-between">
       <div className="flex flex-col gap-2">
         <div className="text-xl font-medium">{formName}</div>
         <div className="text-sm">
@@ -83,7 +47,8 @@ const ApplicationCard = (props) => {
             className={`text-xs p-1 rounded-md ${
               props.application.payment_status?.toLowerCase() === "in progress"
                 ? "text-yellow-800"
-                : props.application.payment_status?.toLowerCase() === "resubmitted"
+                : props.application.payment_status?.toLowerCase() ===
+                  "resubmitted"
                 ? "text-indigo-700"
                 : props.application.payment_status?.toLowerCase() ===
                   "inspection scheduled"
@@ -119,14 +84,7 @@ const ApplicationCard = (props) => {
           text="View Application "
           onClick={props.onView ? () => props.onView(props.application) : null}
         ></Button>
-        <Button
-          moreClass="w-fit text-white font-bold uppercase px-4"
-          text="Pay"
-          onClick={handlePayment}
-          otherProps={{
-            disabled: props?.application?.payment_status !== "Pending" 
-          }}
-        ></Button>
+        
       </div>
     </Card>
   );

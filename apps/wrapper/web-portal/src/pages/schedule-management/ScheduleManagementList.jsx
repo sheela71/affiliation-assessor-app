@@ -31,7 +31,7 @@ import { readableDate } from "../../utils";
 
 const ScheduleManagementList = () => {
   const navigation = useNavigate();
-  const { setSpinner,setToast,toast } = useContext(ContextAPI);
+  const { setSpinner, setToast, toast } = useContext(ContextAPI);
   var resUserData = [];
   const [assessmentScheduleList, setAssessmentScheduleList] = useState();
   const [scheduleTableList, setScheduleTableList] = useState([]);
@@ -232,7 +232,7 @@ const ScheduleManagementList = () => {
       ...searchData,
     };
     try {
-      setSpinner(true)
+      setSpinner(true);
       const res = await searchAssessments(postData);
       setAssessmentScheduleList(res?.data?.assessment_schedule);
       const data = res?.data?.assessment_schedule;
@@ -243,8 +243,8 @@ const ScheduleManagementList = () => {
       setScheduleTableList(data.map(setTableData));
     } catch (error) {
       console.log("error - ", error);
-    }finally{
-      setSpinner(false)
+    } finally {
+      setSpinner(false);
     }
   };
 
@@ -287,7 +287,7 @@ const ScheduleManagementList = () => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-row">
               <div className="flex flex-grow items-center">
-                <div className="text-2xl font-medium">Schedule management</div>
+                <div className="text-xl font-semibold">Schedule Management</div>
               </div>
               <div className="flex flex-grow justify-end">
                 <span className="flex gap-4">
@@ -299,7 +299,7 @@ const ScheduleManagementList = () => {
                 </span>
               </div>
             </div>
-            <div className="flex flex-wrap">
+            {/* <div className="flex flex-wrap">
               {cardArray.map((obj, index) => (
                 <Card
                   moreClass="shadow-md w-[200px] h-[100px] m-3 first:ml-0"
@@ -313,7 +313,7 @@ const ScheduleManagementList = () => {
                   </div>
                 </Card>
               ))}
-            </div>
+            </div> */}
           </div>
           <div className="flex flex-col gap-4">
             <FilteringTable

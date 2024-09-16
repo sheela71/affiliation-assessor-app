@@ -4,10 +4,43 @@ import customPost from "./customPost";
 import customPostPdf from "./customPostPdf";
 
 const BASE_URL = process.env.REACT_APP_USER_SERVICE_URL;
+const KEYCLOAK_BASE_URL =
+  process.env.REACT_APP_WEB_PORTAL_USER_SERVICE_URL ||
+  "https://uphrh.in/api/api/v1/user/";
 const applicationId = process.env.REACT_APP_APPLICATION_ID;
 const ENKETO_MANAGER_URL = process.env.REACT_APP_ENKETO_MANAGER_URL;
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
+const keyCloakAxiosService = axios.create({
+  baseURL: KEYCLOAK_BASE_URL,
+});
 
+keyCloakAxiosService.interceptors.request.use(
+  (request) => {
+    console.log(request);
+    // const user_data = getCookie('userData');
+    request.headers["Accept"] = "*/*";
+    request.headers["Content-Type"] = "application/json";
+    return request;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+keyCloakAxiosService.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  function (error) {
+    let res = error.response;
+    if (res.status === 401) {
+      console.error("Unauthorized  user. Status Code: " + res.status);
+      // window.location.href = “https://example.com/login”;
+    }
+    console.error("Looks like there was a problem. Status Code: " + res.status);
+    return Promise.reject(res?.data?.error);
+  }
+);
 export const loginMedical = async (username, pass) => {
   try {
     const res = await axios.post(BASE_URL + "login", {
@@ -15,6 +48,29 @@ export const loginMedical = async (username, pass) => {
       loginId: username,
       applicationId: applicationId,
     });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+export const login = async (username, pass) => {
+  try {
+    const res = await keyCloakAxiosService.post(
+      KEYCLOAK_BASE_URL + "keycloak/usrlogin",
+      {
+        password: pass,
+        username: username,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": getCookie("access_token")
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJSR3RkMkZzeG1EMnJER3I4dkJHZ0N6MVhyalhZUzBSSyJ9.kMLn6177rvY53i0RAN3SPD5m3ctwaLb32pMYQ65nBdA",
+        },
+      }
+    );
     return res.data;
   } catch (err) {
     console.log(err);
@@ -317,7 +373,7 @@ export const saveFormSubmission = (data) => {
     }`,
     variables: { object: data },
   };
-  
+
   return makeHasuraCalls(query);
 };
 

@@ -23,7 +23,7 @@ export default function OnGroundInspectionAnalysis() {
   var formsDataList = [];
   resData = formsDataList;
   const [formsList, setFormsList] = useState();
-  const [round,setRound] = useState(1)
+  const [round, setRound] = useState(1);
   const [state, setState] = useState({
     menu_selected: "In Progress",
   });
@@ -34,7 +34,7 @@ export default function OnGroundInspectionAnalysis() {
   });
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const {setSpinner} = useContext(ContextAPI)
+  const { setSpinner } = useContext(ContextAPI);
 
   const COLUMN = [
     {
@@ -54,7 +54,7 @@ export default function OnGroundInspectionAnalysis() {
       accessor: "assisting_assessor",
     },
     {
-      Header: "Published on",
+      Header: "Submitted on",
       accessor: "published_on",
     },
     {
@@ -91,18 +91,15 @@ export default function OnGroundInspectionAnalysis() {
     },
   ];
 
-
-
-
   const handleSelectMenu = (menuItem) => {
     setState((prevState) => ({ ...prevState, menu_selected: menuItem }));
     setPaginationInfo((prevState) => ({ ...prevState, offsetNo: 0 }));
     setIsFilterOpen(false);
-    setIsSearchOpen(false)
+    setIsSearchOpen(false);
   };
 
   const navigateToView = (formObj) => {
-    console.log("formObj",formObj)
+    console.log("formObj", formObj);
     const navigationURL = `${ADMIN_ROUTE_MAP.adminModule.onGroundInspection.viewForm}/${formObj?.original?.form_name}/${formObj?.original?.id}/${formObj?.original?.institute?.name}/${round}`;
     navigation(navigationURL);
     const postData = { form_id: formObj?.original?.id };
@@ -111,12 +108,12 @@ export default function OnGroundInspectionAnalysis() {
 
   const markStatus = async (postData) => {
     try {
-      setSpinner(true)
+      setSpinner(true);
       const res = await markReviewStatus(postData);
     } catch (error) {
       console.log("error - ", error);
-    }finally{
-      setSpinner(false)
+    } finally {
+      setSpinner(false);
     }
   };
 
@@ -124,17 +121,22 @@ export default function OnGroundInspectionAnalysis() {
     if (!isSearchOpen && !isFilterOpen) {
       fetchOnGroundAssessorData();
     }
-  }, [paginationInfo.offsetNo, paginationInfo.limit, state.menu_selected, round]);
+  }, [
+    paginationInfo.offsetNo,
+    paginationInfo.limit,
+    state.menu_selected,
+    round,
+  ]);
 
   const fetchOnGroundAssessorData = async () => {
     const postData = {
       offsetNo: paginationInfo.offsetNo,
       limit: paginationInfo.limit,
       formStatus: state.menu_selected,
-      round: round
+      round: round,
     };
     try {
-      setSpinner(true)
+      setSpinner(true);
       const res = await getOnGroundAssessorData(postData);
       setPaginationInfo((prevState) => ({
         ...prevState,
@@ -143,8 +145,8 @@ export default function OnGroundInspectionAnalysis() {
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
-    }finally{
-      setSpinner(false)
+    } finally {
+      setSpinner(false);
     }
   };
 
@@ -157,7 +159,7 @@ export default function OnGroundInspectionAnalysis() {
       ...searchData,
     };
     try {
-      setSpinner(true)
+      setSpinner(true);
       const res = await searchOGA(postData);
       setPaginationInfo((prevState) => ({
         ...prevState,
@@ -166,8 +168,8 @@ export default function OnGroundInspectionAnalysis() {
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
-    }finally{
-      setSpinner(false)
+    } finally {
+      setSpinner(false);
     }
   };
 
@@ -176,7 +178,7 @@ export default function OnGroundInspectionAnalysis() {
       condition: {
         ...filters["condition"],
         form_status: { _eq: state.menu_selected },
-        round: {_eq: round}
+        round: { _eq: round },
       },
     };
     const postData = {
@@ -185,7 +187,7 @@ export default function OnGroundInspectionAnalysis() {
       ...customFilters,
     };
     try {
-      setSpinner(true)
+      setSpinner(true);
       const res = await filterOGA(postData);
       setPaginationInfo((prevState) => ({
         ...prevState,
@@ -194,8 +196,8 @@ export default function OnGroundInspectionAnalysis() {
       setFormsList(res?.data?.form_submissions);
     } catch (error) {
       console.log("error - ", error);
-    }finally{
-      setSpinner(false)
+    } finally {
+      setSpinner(false);
     }
   };
 
@@ -226,7 +228,7 @@ export default function OnGroundInspectionAnalysis() {
       status: e?.form_status || "NA",
       form_status: e?.form_status,
       review_status: e?.review_status,
-      institute: e?.institute
+      institute: e?.institute,
     };
 
     resData.push(formsData);
@@ -248,164 +250,171 @@ export default function OnGroundInspectionAnalysis() {
 
   return (
     <>
-    <Nav/>
-    <div className={`container m-auto min-h-[calc(100vh-148px)] px-3 py-12`}>
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-4">
-          <div>
-            <h1 className="text-2xl font-medium">Your activity</h1>
-          </div>
-          <div className="flex flex-wrap">
-            {cardArray.map((obj, index) => (
-              <Card
-                moreClass="shadow-md w-[200px] h-[100px] m-3 first:ml-0"
-                key={index}
-              >
-                <div className="flex flex-col place-items-start justify-center gap-2">
-                  <h3 className="text-xl font-semibold">{obj.value}</h3>
-                  <div className="text-sm font-medium text-gray-700">
-                    {obj.text}
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <div>
-            <h1 className="text-2xl font-medium">All applications</h1>
-          </div>
-
-          <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
-            <div className="sm:col-span-3">
-              <div className="w-72 bg-white rounded-[8px]">
-                <Select
-                  value={round}
-                  label="Select round"
-                  onChange={(value) => setRound(value)}
+      <Nav />
+      <div className={`container m-auto min-h-[calc(100vh-148px)] px-3 py-12`}>
+        <div className="flex flex-col gap-8">
+          {/* <div className="flex flex-col gap-4">
+            <div>
+              <h1 className="text-2xl font-medium">Your activity</h1>
+            </div>
+            <div className="flex flex-wrap">
+              {cardArray.map((obj, index) => (
+                <Card
+                  moreClass="shadow-md w-[200px] h-[100px] m-3 first:ml-0"
+                  key={index}
                 >
-                  <Option value={1}>Round one</Option>
-                  <Option value={2}>Round two</Option>
-                </Select>
+                  <div className="flex flex-col place-items-start justify-center gap-2">
+                    <h3 className="text-xl font-semibold">{obj.value}</h3>
+                    <div className="text-sm font-medium text-gray-700">
+                      {obj.text}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div> */}
+
+          <div className="flex flex-col gap-4">
+            <div>
+              <h1 className="text-xl font-semibold">All Applications</h1>
+            </div>
+
+            <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
+              <div className="sm:col-span-3">
+                <div className="w-72 bg-white rounded-[8px]">
+                  <Select
+                    value={round}
+                    label="Select round"
+                    onChange={(value) => setRound(value)}
+                  >
+                    <Option value={1}>Round one</Option>
+                    <Option value={2}>Round two</Option>
+                  </Select>
+                </div>
               </div>
             </div>
           </div>
+
+          <div className="flex flex-col gap-3">
+            <ul className="flex flex-wrap -mb-px">
+              <li
+                className="gap-3"
+                onClick={() => handleSelectMenu("In Progress")}
+              >
+                <a
+                  href="#"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "In Progress"
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  }`}
+                >
+                  New
+                </a>
+              </li>
+              <li
+                className="gap-3"
+                onClick={() => handleSelectMenu("Approved")}
+              >
+                <a
+                  href="#"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Approved"
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  }`}
+                  aria-current="page"
+                >
+                  Approved
+                </a>
+              </li>
+              <li
+                className="gap-3"
+                onClick={() => handleSelectMenu("Rejected")}
+              >
+                <a
+                  href="#"
+                  className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
+                    state.menu_selected === "Rejected"
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  }`}
+                >
+                  Rejected
+                </a>
+              </li>
+            </ul>
+            {/* <div>create a search bar and filter component here</div> */}
+
+            {/* table creation starts here */}
+            {state.menu_selected === "In Progress" && (
+              <div className="flex flex-col gap-4">
+                <FilteringTable
+
+                  dataList={resData.filter(
+                    (item) => item.form_status === "In Progress"
+                  )}
+                  navigateFunc={navigateToView}
+                  columns={COLUMN}
+                  pagination={true}
+                  onRowSelect={() => {}}
+                  filterApiCall={filterApiCall}
+                  showFilter={true}
+                  paginationInfo={paginationInfo}
+                  setPaginationInfo={setPaginationInfo}
+                  searchApiCall={searchApiCall}
+                  setIsSearchOpen={setIsSearchOpen}
+                  setIsFilterOpen={setIsFilterOpen}
+                  selectedRound={round}
+                />
+              </div>
+            )}
+
+            {state.menu_selected === "Approved" && (
+              <div className="flex flex-col gap-4">
+                <FilteringTable
+                  dataList={resData.filter(
+                    (item) => item.form_status === "Approved"
+                  )}
+                  navigateFunc={navigateToView}
+                  columns={COLUMN}
+                  pagination={true}
+                  onRowSelect={() => {}}
+                  filterApiCall={filterApiCall}
+                  showFilter={true}
+                  paginationInfo={paginationInfo}
+                  setPaginationInfo={setPaginationInfo}
+                  searchApiCall={searchApiCall}
+                  setIsSearchOpen={setIsSearchOpen}
+                  setIsFilterOpen={setIsFilterOpen}
+                  selectedRound={round}
+                />
+              </div>
+            )}
+
+            {state.menu_selected === "Rejected" && (
+              <div className="flex flex-col gap-4">
+                <FilteringTable
+                  dataList={resData.filter(
+                    (item) => item.form_status === "Rejected"
+                  )}
+                  navigateFunc={navigateToView}
+                  columns={COLUMN}
+                  pagination={true}
+                  onRowSelect={() => {}}
+                  filterApiCall={filterApiCall}
+                  showFilter={true}
+                  paginationInfo={paginationInfo}
+                  setPaginationInfo={setPaginationInfo}
+                  searchApiCall={searchApiCall}
+                  setIsSearchOpen={setIsSearchOpen}
+                  setIsFilterOpen={setIsFilterOpen}
+                  selectedRound={round}
+                />
+              </div>
+            )}
+          </div>
         </div>
-
-        <div className="flex flex-col gap-3">
-          <ul className="flex flex-wrap -mb-px">
-            <li
-              className="gap-3"
-              onClick={() => handleSelectMenu("In Progress")}
-            >
-              <a
-                href="#"
-                className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                  state.menu_selected === "In Progress"
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : ""
-                }`}
-              >
-                New
-              </a>
-            </li>
-            <li className="gap-3" onClick={() => handleSelectMenu("Approved")}>
-              <a
-                href="#"
-                className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                  state.menu_selected === "Approved"
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : ""
-                }`}
-                aria-current="page"
-              >
-                Approved
-              </a>
-            </li>
-            <li className="gap-3" onClick={() => handleSelectMenu("Rejected")}>
-              <a
-                href="#"
-                className={`inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-600 ${
-                  state.menu_selected === "Rejected"
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : ""
-                }`}
-              >
-                Rejected
-              </a>
-            </li>
-          </ul>
-          {/* <div>create a search bar and filter component here</div> */}
-
-          {/* table creation starts here */}
-          {state.menu_selected === "In Progress" && (
-            <div className="flex flex-col gap-4">
-              <FilteringTable
-                dataList={resData.filter(
-                  (item) => item.form_status === "In Progress"
-                )}
-                navigateFunc={navigateToView}
-                columns={COLUMN}
-                pagination={true}
-                onRowSelect={() => {}}
-                filterApiCall={filterApiCall}
-                showFilter={true}
-                paginationInfo={paginationInfo}
-                setPaginationInfo={setPaginationInfo}
-                searchApiCall={searchApiCall}
-                setIsSearchOpen={setIsSearchOpen}
-                setIsFilterOpen={setIsFilterOpen}
-                selectedRound={round}
-              />
-            </div>
-          )}
-
-          {state.menu_selected === "Approved" && (
-            <div className="flex flex-col gap-4">
-              <FilteringTable
-                dataList={resData.filter(
-                  (item) => item.form_status === "Approved"
-                )}
-                navigateFunc={navigateToView}
-                columns={COLUMN}
-                pagination={true}
-                onRowSelect={() => {}}
-                filterApiCall={filterApiCall}
-                showFilter={true}
-                paginationInfo={paginationInfo}
-                setPaginationInfo={setPaginationInfo}
-                searchApiCall={searchApiCall}
-                setIsSearchOpen={setIsSearchOpen}
-                setIsFilterOpen={setIsFilterOpen}
-                selectedRound={round}
-              />
-            </div>
-          )}
-
-          {state.menu_selected === "Rejected" && (
-            <div className="flex flex-col gap-4">
-              <FilteringTable
-                dataList={resData.filter(
-                  (item) => item.form_status === "Rejected"
-                )}
-                navigateFunc={navigateToView}
-                columns={COLUMN}
-                pagination={true}
-                onRowSelect={() => {}}
-                filterApiCall={filterApiCall}
-                showFilter={true}
-                paginationInfo={paginationInfo}
-                setPaginationInfo={setPaginationInfo}
-                searchApiCall={searchApiCall}
-                setIsSearchOpen={setIsSearchOpen}
-                setIsFilterOpen={setIsFilterOpen}
-                selectedRound={round}
-              />
-            </div>
-          )}
-        </div>
-      </div>
       </div>
     </>
   );

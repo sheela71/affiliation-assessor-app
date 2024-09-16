@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Stepper, Step } from "@material-tailwind/react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { GrDocumentPdf } from "react-icons/gr";
 import { AiOutlineClose } from "react-icons/ai";
 import { ContextAPI } from "../../utils/ContextAPI";
 
 import Calendar from "react-calendar";
 import Select from "react-select";
-
+import ADMIN_ROUTE_MAP from "../../routes/adminRouteMap";
 import "react-calendar/dist/Calendar.css";
 import "./calendar.css";
 
@@ -25,7 +26,6 @@ import {
   registerEvent,
   updateFormStatus,
 } from "../../api";
-import { useParams } from "react-router-dom";
 
 // import Toast from "../../components/Toast";
 
@@ -35,7 +35,7 @@ function ScheduleInspectionModal({ closeSchedule, otherInfo }) {
   const [isFirstStep, setIsFirstStep] = React.useState(false);
   const { setSpinner, setToast } = useContext(ContextAPI);
   const { formId } = useParams();
-
+  const navigate = useNavigate();
   const handleNext = () => !isLastStep && setActiveStep((cur) => cur + 1);
   const handlePrev = () => !isFirstStep && setActiveStep((cur) => cur - 1);
 
@@ -209,6 +209,10 @@ function ScheduleInspectionModal({ closeSchedule, otherInfo }) {
         form_id: otherInfo?.formId * 1,
         form_status: "Inspection Scheduled",
       });
+      setTimeout(
+        () => navigate(`${ADMIN_ROUTE_MAP.adminModule.desktopAnalysis.home}`),
+        500
+      );
     } catch (error) {
       let date = new Date(formData.assessment_schedule.date);
       if (error?.response?.data.code === "constraint-violation") {

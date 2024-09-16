@@ -5,8 +5,9 @@ import XMLParser from "react-xml-parser";
 import {
   FaAngleRight,
   FaArrowLeft,
-  FaEye,
   FaFileDownload,
+  FaDownload,
+  FaRegTimesCircle,
 } from "react-icons/fa";
 
 import {
@@ -15,38 +16,43 @@ import {
   setToLocalForage,
   updateFormData,
   getSpecificDataFromForage,
-  removeItemFromLocalForage,
   removeAllFromLocalForage,
 } from "./../forms";
 
 import APPLICANT_ROUTE_MAP from "../routes/ApplicantRoute";
+import { setCookie,  } from "../utils";
 import { Button, Card } from "../components";
 import CommonModal from "../Modal";
 import Toast from "../components/Toast";
+import "./loading.css";
 
 import { getFormData, base64ToPdf, getLocalTimeInISOFormat } from "../api";
 import {
   getPrefillXML,
   saveFormSubmission,
-  getSubmissionXML,
   getFormURI,
   updateFormSubmission,
 } from "../api/formApi";
+import { generate_uuidv4 } from "../utils";
+import { applicantService } from "../services";
 
 const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
-const GCP_URL =
-  process.env.REACT_APP_GCP_AFFILIATION_LINK ||
-  "https://storage.googleapis.com/dev-public-upsmf/affiliation/";
 
 const CreateForm = (props) => {
-  let { formName, formId, applicantStatus } = useParams();
-  const [encodedFormURI, setEncodedFormURI] = useState("");
-  const scheduleId = useRef();
   const navigate = useNavigate();
-  const [onFormSuccessData, setOnFormSuccessData] = useState(undefined);
-  const [formDataNoc, setFormDataNoc] = useState({});
-  const [onFormFailureData, setOnFormFailureData] = useState(undefined);
-  const [isDownloading, setIsDownloading] = useState(false);
+
+  let { formName, formId, applicantStatus } = useParams();
+  let [encodedFormURI, setEncodedFormURI] = useState("");
+  let [paymentDetails,setPaymentDetails] = useState("")
+  let [onFormSuccessData, setOnFormSuccessData] = useState(undefined);
+  let [formDataNoc, setFormDataNoc] = useState({});
+  let [onFormFailureData, setOnFormFailureData] = useState(undefined);
+  let [isDownloading, setIsDownloading] = useState(false);
+  let [previewModal, setPreviewModal] = useState(false);
+  let previewFlag = false;
+
+  // Spinner Element
+  const spinner = document.getElementById("backdrop");
 
   const [assData, setData] = useState({
     district: "",
@@ -57,7 +63,6 @@ const CreateForm = (props) => {
     latitude: null,
     longitude: null,
   });
-  const [prefilledFormData, setPrefilledFormData] = useState();
   const [onSubmit, setOnSubmit] = useState(false);
 
   const { userRepresentation } = getCookie("userData");
@@ -112,15 +117,14 @@ const CreateForm = (props) => {
       if (formId) {
         const postData = { form_id: formId };
         const res = await getFormData(postData);
-        formData = res.data.form_submissions[0];
-        console.log("formData - ", formData);
+        formData = res?.data?.form_submissions[0];
+        setPaymentDetails(formData?.payment_status)
         setFormDataNoc(formData);
       }
     }
 
     let fileGCPPath =
       process.env.REACT_APP_GCP_AFFILIATION_LINK + formName + ".xml";
-    console.log("fileGCPPath - ", fileGCPPath);
 
     let formURI = await getPrefillXML(
       `${fileGCPPath}`,
@@ -137,7 +141,12 @@ const CreateForm = (props) => {
     try {
       const { nextForm, formData, onSuccessData, onFailureData } = data;
       if (data?.state === "ON_FORM_SUCCESS_COMPLETED") {
-        setOnSubmit(true);
+        if (!previewFlag) {
+          fetchFormData();
+          handleRenderPreview();
+        } else {
+          handleSubmit();
+        }
       }
 
       if (nextForm?.type === "form") {
@@ -159,9 +168,31 @@ const CreateForm = (props) => {
     }
   };
 
+  const handleRenderPreview = () => {
+    setPreviewModal(true);
+    previewFlag = true;
+    setTimeout(() => {
+      const iframeElem = document.getElementById("preview-enketo-form");
+      if (window.location.host.includes("localhost")) {
+        return;
+      }
+      let iframeContent =
+        iframeElem?.contentDocument || iframeElem?.contentWindow.document;
+      if (!iframeContent) return;
+      let section = iframeContent?.getElementsByClassName("or-group");
+      if (!section) return;
+      for (var i = 0; i < section?.length; i++) {
+        var inputElements = section[i].querySelectorAll("input");
+        inputElements.forEach((input) => {
+          input.disabled = true;
+        });
+      }
+      iframeContent.getElementById("save-draft").style.display = "none";
+    }, 1500);
+  };
+
   const handleSubmit = async () => {
     const updatedFormData = await updateFormData(formSpec.start, userId);
-    const storedData = await getSpecificDataFromForage("required_data");
     const course_details = await getSpecificDataFromForage("course_details");
 
     setTimeout(() => {
@@ -178,6 +209,8 @@ const CreateForm = (props) => {
       course_level: course_details?.course_level,
       course_id: course_details?.course_id,
     };
+
+    console.log("applicantStatus - ", applicantStatus);
 
     if (!applicantStatus) {
       await saveFormSubmission({
@@ -253,10 +286,6 @@ const CreateForm = (props) => {
           `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`
         );
 
-        // console.log(
-        //   "JSON.parse(e.data).formData - ",
-        //   JSON.parse(e.data).formData
-        // );
         await setToLocalForage(
           `${userId}_${startingForm}_${new Date().toISOString().split("T")[0]}`,
           {
@@ -278,8 +307,50 @@ const CreateForm = (props) => {
   };
 
   const handleGoBack = () => {
-    navigate(-1);
+    navigate(`${APPLICANT_ROUTE_MAP.dashboardModule.my_applications}`);
   };
+
+  const handlePayment = async () => {
+    // setcookies here
+    setCookie(
+      "formId",formId
+    );
+    const instituteDetails = getCookie("institutes");
+    const instituteId = instituteDetails?.[0]?.id;
+    const postData = {
+      endpoint: "https://eazypayuat.icicibank.com/EazyPG",
+      returnUrl: "https://payment.uphrh.in/api/v1/user/payment",
+      paymode: "9",
+      secret: "",
+      merchantId: "600547",
+      mandatoryFields: {
+        referenceNo: generate_uuidv4(),
+        submerchantId: "45",
+        transactionAmount: "10",
+        invoiceId: "x1",
+        invoiceDate: "x",
+        invoiceTime: "x",
+        merchantId: "x",
+        payerType: "affiliation",
+        payerId: `${instituteId}`,
+        transactionId: "x",
+        transactionDate: "x",
+        transactionTime: "x",
+        transactionStatus: "x",
+        refundId: "x",
+        refundDate: "x",
+        refundTime: "x",
+        refundStatus: "x",
+        module: "affiliation"
+      },
+      optionalFields: "affiliation",
+    };
+    try {
+      const paymentRes = await applicantService.initiatePayment(postData);
+      await window.open(paymentRes?.data?.redirectUrl);
+    } catch (error) {}
+  };
+
 
   const handleFormDownload = async () => {
     try {
@@ -302,19 +373,62 @@ const CreateForm = (props) => {
     }
   };
 
-  // const handlePrintPdf = () => {
-  //   const URL = `${ENKETO_URL}/preview?formSpec=${encodeURI(
-  //     JSON.stringify(formSpec)
-  //   )}&xform=${encodedFormURI}&userId=${userId}`;
+  const checkIframeLoaded = () => {
+    if (spinner) {
+      spinner.style.display = "none";
+    }
 
-  //   var strWindowFeatures =
-  //     "fullscreen=1, channelmode=1, status=1, resizable=1";
-  //   var win = window.open(URL, "_blank", strWindowFeatures);
-  // };
+    if (window.location.host.includes("applicant.upsmfac")) {
+      const iframeElem = document.getElementById("enketo-applicant-form");
+      var iframeContent =
+        iframeElem?.contentDocument || iframeElem?.contentWindow.document;
+      if (!iframeContent) return;
+      if (applicantStatus && applicantStatus?.toLowerCase() !== "returned") {
+        var section = iframeContent?.getElementsByClassName("or-group");
+        if (!section) return;
+        for (var i = 0; i < section?.length; i++) {
+          var inputElements = section[i].querySelectorAll("input");
+          inputElements.forEach((input) => {
+            input.disabled = true;
+          });
+        }
+
+        iframeContent.getElementById("submit-form").style.display = "none";
+        iframeContent.getElementById("save-draft").style.display = "none";
+      }
+
+      // Need to work on Save draft...
+      var draftButton = iframeContent.getElementById("save-draft");
+      draftButton?.addEventListener("click", function () {
+        alert("Hello world!");
+      });
+    }
+  };
 
   useEffect(() => {
     fetchFormData();
     bindEventListener();
+
+    if (spinner) {
+      spinner.style.display = "flex";
+    }
+
+    setTimeout(() => {
+      checkIframeLoaded();
+    }, 2500);
+
+    // To clean all variables
+    return () => {
+      setEncodedFormURI("");
+      setOnFormSuccessData(undefined);
+      setFormDataNoc({});
+      setOnFormFailureData(undefined);
+      setIsDownloading(false);
+      setPreviewModal(false);
+      previewFlag = false;
+      removeAllFromLocalForage();
+      console.log("Create form is closed!");
+    };
   }, []);
 
   return (
@@ -325,16 +439,13 @@ const CreateForm = (props) => {
       <div className="h-[48px] bg-white drop-shadow-sm">
         <div className="container mx-auto px-3 py-3">
           <div className="flex flex-row font-bold gap-2 items-center">
-            <Link>
-              <span
-                onClick={handleGoBack}
-                className="text-primary-400 flex flex-row gap-2"
-              >
+            <Link to={APPLICANT_ROUTE_MAP.dashboardModule.my_applications}>
+              <div className="text-primary-400 flex flex-row gap-2">
                 <div className="flex items-center">
                   <FaArrowLeft className="text-[16px]" />
                 </div>
-                Back
-              </span>
+                My Applications
+              </div>
             </Link>
             <FaAngleRight className="text-[16px]" />
             <span className="text-gray-500">Create form</span>
@@ -363,16 +474,22 @@ const CreateForm = (props) => {
             >
               Download NOC/Certificate
             </button>
+            <button
+          className={`${
+            paymentDetails === "Pending"
+              ? "border border-blue-900 bg-blue-900 text-white rounded-[4px] px-2 h-[44px]"
+              : "cursor-not-allowed border border-gray-500 bg-white rounded-[4px] text-gray-200 px-2 h-[44px]"
+          }`}
+          disabled={paymentDetails === "Pending" ? false : true}
+          onClick={handlePayment}
+          
+        >Pay</button>
           </div>
         </div>
+
         <Card moreClass="shadow-md">
           <div className="flex flex-col gap-5">
             <div className="flex flex-grow gap-3 justify-end">
-              <button className="bg-primary-900 py-3 font-medium rounded-[4px] px-6 text-white flex flex-row items-center gap-3">
-                <FaEye />
-                <span>Preview</span>
-              </button>
-
               <button
                 className={`bg-primary-900 py-3 font-medium rounded-[4px] px-6 text-white flex flex-row items-center gap-3 ${
                   isDownloading ? "cursor-not-allowed" : ""
@@ -386,6 +503,7 @@ const CreateForm = (props) => {
             </div>
             <div className="flex">
               <iframe
+                id="enketo-applicant-form"
                 title="form"
                 src={`${ENKETO_URL}/preview?formSpec=${encodeURI(
                   JSON.stringify(formSpec)
@@ -416,6 +534,49 @@ const CreateForm = (props) => {
               >
                 Yes! Submit
               </div>
+            </div>
+          </CommonModal>
+        )}
+
+        {previewModal && (
+          <CommonModal
+            moreStyles={{
+              padding: "1rem",
+              maxWidth: "95%",
+              minWidth: "90%",
+              maxHeight: "90%",
+            }}
+          >
+            <div className="flex flex-row w-full items-center cursor-pointer gap-4">
+              <div className="flex flex-grow font-bold text-xl">
+                Preview and Submit form
+              </div>
+              <div className="flex flex-grow gap-3 justify-end items-center">
+                {!isDownloading && (
+                  <div onClick={handleFormDownload}>
+                    <FaDownload className="text-[36px]" />
+                  </div>
+                )}
+                {isDownloading && <div className="loader"></div>}
+
+                <FaRegTimesCircle
+                  className="text-[36px]"
+                  onClick={() => {
+                    setPreviewModal(false);
+                    previewFlag = false;
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col justify-center w-full py-4">
+              <iframe
+                title="form"
+                id="preview-enketo-form"
+                src={`${ENKETO_URL}/preview?formSpec=${encodeURI(
+                  JSON.stringify(formSpec)
+                )}&xform=${encodedFormURI}&userId=${userId}`}
+                style={{ height: "80vh", width: "100%" }}
+              />
             </div>
           </CommonModal>
         )}

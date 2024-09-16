@@ -23,6 +23,7 @@ import { getCookie, removeCookie, setCookie } from "../../utils";
 export default function AdminCreateUser() {
   let { userId } = useParams();
   const { setSpinner, setToast } = useContext(ContextAPI);
+  let [emailValue,setEmailValue] = useState("")
   const [user, setUser] = useState({
     firstname: "",
     lastname: "",
@@ -63,6 +64,12 @@ export default function AdminCreateUser() {
       setSpinner(false);
     }
   };
+  
+  const isEmail =  /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(user.email)
+  const isPhoneNumber = /^(?:(?:\(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(user.phonenumber)
+  console.log("isPhone",isPhoneNumber)
+  // setEmailValue(isEmail)
+  // console.log("emailValue",emailValue)
 
   const handleChange = (name, value) => {
     setUser((prevState) => ({
@@ -70,18 +77,19 @@ export default function AdminCreateUser() {
       [name]: value,
     }));
   };
-
   const isFieldsValid = () => {
     if (
       user.firstname === "" ||
       user.lastname === "" ||
-      user.email === "" ||
+      !isEmail ||
+      user.email === ""||
       user.role === "" ||
       user.phonenumber === "" ||
+      !isPhoneNumber||
       user.phonenumber.length > 10 ||
       user.phonenumber.length < 10
     ) {
-      return false;
+      return false
     } else return true;
   };
 
@@ -94,16 +102,18 @@ export default function AdminCreateUser() {
       client_secret: "edd0e83d-56b9-4c01-8bf8-bad1870a084a",
     };
     //Access Token API call
-    const accessTokenResponse = await userService.getAccessToken(
-      accessTokenObj
-    );
-    setCookie(
-      "access_token",
-      "Bearer " + accessTokenResponse?.data?.access_token
-    );
-    if (accessTokenResponse.status !== 200) {
-      errorFlag = true;
-    }
+    // const accessTokenResponse = await userService.getAccessToken(
+    //   accessTokenObj
+    // );
+    // setCookie(
+    //   "access_token",
+    //   "Bearer " + accessTokenResponse?.data?.access_token
+    // );
+    // if (accessTokenResponse.status !== 200) {
+    //   errorFlag = true;
+    // }
+
+    setCookie("access_token", process.env.REACT_APP_AUTH_TOKEN);
 
     if (userId) {
       //for edit user
@@ -203,40 +213,36 @@ export default function AdminCreateUser() {
         //keycloak API call
         const keycloakRes = await createBulkUsersKeyCloak(postDataKeyCloak);
 
-        if (keycloakRes?.data?.failedUser.length) {
+        if (keycloakRes?.status !== 200) {
           errorFlag = true;
         }
 
         //Hasura API call
-
-        if (user.role === "Assessor") {
-          postDataHasura["assessors"].push({
-            code: `${Math.floor(1000 + Math.random() * 9000)}`,
-            user_id: keycloakRes.data.succeedUser.filter(
-              (item) => item.email === user.email
-            )[0].userId,
-            email: user.email,
-            name: user.firstname + " " + user.lastname,
-            phonenumber: user.phonenumber,
-            fname: user.firstname,
-            lname: user.lastname,
-            role: user.role,
-          });
+        if (keycloakRes.data) {
+          if (user.role === "Assessor") {
+            postDataHasura["assessors"].push({
+              code: `${Math.floor(1000 + Math.random() * 9000)}`,
+              user_id: keycloakRes.data,
+              email: user.email,
+              name: user.firstname + " " + user.lastname,
+              phonenumber: user.phonenumber,
+              fname: user.firstname,
+              lname: user.lastname,
+              role: user.role,
+            });
+          }
+          if (user.role === "Desktop-Admin") {
+            postDataHasura["regulators"].push({
+              user_id: keycloakRes.data,
+              email: user.email,
+              full_name: user.firstname + " " + user.lastname,
+              phonenumber: user.phonenumber,
+              fname: user.firstname,
+              lname: user.lastname,
+              role: user.role,
+            });
+          }
         }
-        if (user.role === "Desktop-Admin") {
-          postDataHasura["regulators"].push({
-            user_id: keycloakRes.data.succeedUser.filter(
-              (user) => user.email === user.email
-            )[0].userId,
-            email: user.email,
-            full_name: user.firstname + " " + user.lastname,
-            phonenumber: user.phonenumber,
-            fname: user.firstname,
-            lname: user.lastname,
-            role: user.role,
-          });
-        }
-
         const hasuraRes = await createBulkUserHasura(postDataHasura);
         if (hasuraRes.status !== 200) {
           errorFlag = true;

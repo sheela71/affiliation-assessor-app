@@ -102,7 +102,9 @@ const MyApplications = () => {
                   key={application.form_id}
                   onView={handleViewApplicationHandler}
                 />
-              ))}
+              ))
+          }
+              {console.log("applications",applications)}
             </div>
           )}
         </div>

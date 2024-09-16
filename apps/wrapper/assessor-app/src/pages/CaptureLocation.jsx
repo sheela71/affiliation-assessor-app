@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import ROUTE_MAP from "../routing/routeMap";
 
 import { StateContext } from "../App";
-import { getCookie, getSpecificDataFromForage, setToLocalForage } from "../utils";
+import {
+  getCookie,
+  getSpecificDataFromForage,
+  setToLocalForage,
+} from "../utils";
 
 import Button from "../components/Button";
 import CommonLayout from "../components/CommonLayout";
@@ -14,9 +18,9 @@ const CaptureLocation = () => {
   const [long, setLong] = useState();
   const [showMap, setShowMap] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showContinue, setShowContinue ] = useState(false);
-  const [captureLocation, setLocationCapture] = useState('');
-  const [role, setRole] = useState('');
+  const [showContinue, setShowContinue] = useState(false);
+  const [captureLocation, setLocationCapture] = useState("");
+  const [role, setRole] = useState("");
   const [distance, setDistance] = useState(9999);
   const [error, setError] = useState(false);
   const { state, setState } = useContext(StateContext);
@@ -26,28 +30,34 @@ const CaptureLocation = () => {
 
   const getLocationPermissions = () => {
     getGeolocationCoordinates();
-    navigator.permissions && navigator.permissions.query({name: 'geolocation'})
-    .then(function(PermissionStatus) {
-      PermissionStatus.addEventListener('change', function (e) {
-        if (e.currentTarget.state === 'denied') {
-          setError(`Please allow location access && reload the page to continue`);
-        }
+    navigator.permissions &&
+      navigator.permissions
+        .query({ name: "geolocation" })
+        .then(function (PermissionStatus) {
+          PermissionStatus.addEventListener("change", function (e) {
+            if (e.currentTarget.state === "denied") {
+              setError(
+                `Please allow location access && reload the page to continue`
+              );
+            }
 
-        if (e.currentTarget.state === 'granted') {
-          getGeolocationCoordinates();
-          setError(false);
-        }
-      });
+            if (e.currentTarget.state === "granted") {
+              getGeolocationCoordinates();
+              setError(false);
+            }
+          });
 
-      if (PermissionStatus.state === 'granted') {
-        getGeolocationCoordinates();
-      } else if (PermissionStatus.state === 'prompt') {
-        setError(`Please allow location access to continue`);
-      } else {
-        setError(`Please allow location access and reload the page to continue`);
-      }
-    })
-  }
+          if (PermissionStatus.state === "granted") {
+            getGeolocationCoordinates();
+          } else if (PermissionStatus.state === "prompt") {
+            setError(`Please allow location access to continue`);
+          } else {
+            setError(
+              `Please allow location access and reload the page to continue`
+            );
+          }
+        });
+  };
 
   const getGeolocationCoordinates = () => {
     if (navigator.geolocation) {
@@ -64,7 +74,7 @@ const CaptureLocation = () => {
         setError(false);
       }, 5000);
     }
-  }
+  };
 
   const handleCaptureLocation = (flag) => {
     setLoading(true);
@@ -85,17 +95,17 @@ const CaptureLocation = () => {
         });
 
         // Stored the assessment info, helps on reload...
-        let assessment_obj = await getSpecificDataFromForage('todayAssessment');
+        let assessment_obj = await getSpecificDataFromForage("todayAssessment");
         const userData = {
-          userData : {
+          userData: {
             lat: p.coords.latitude,
-            long: p.coords.longitude
-          }
-        }
+            long: p.coords.longitude,
+          },
+        };
 
         assessment_obj = { ...assessment_obj, ...userData };
         setAssessmentObj(assessment_obj);
-        setToLocalForage('todayAssessment', assessment_obj);
+        setToLocalForage("todayAssessment", assessment_obj);
 
         setDistance(
           calcDistance(
@@ -107,9 +117,9 @@ const CaptureLocation = () => {
         );
 
         if (flag) {
-          setLocationCapture('Location re-captured!');
+          setLocationCapture("Location re-captured!");
         } else {
-          setLocationCapture('Location captured!');
+          setLocationCapture("Location captured!");
         }
 
         setShowContinue(true);
@@ -135,9 +145,9 @@ const CaptureLocation = () => {
       var a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.sin(dLon / 2) *
-        Math.sin(dLon / 2) *
-        Math.cos(lat1) *
-        Math.cos(lat2);
+          Math.sin(dLon / 2) *
+          Math.cos(lat1) *
+          Math.cos(lat2);
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       d = R * c;
     } catch (err) {
@@ -153,16 +163,20 @@ const CaptureLocation = () => {
     return (Value * Math.PI) / 180;
   }
 
-const handleSubmit = () => {
-
-    if ( !assessmentObj?.todayAssessment?.latitude || !assessmentObj?.todayAssessment?.longitude ) {
-      navigate(`${ROUTE_MAP.capture_selfie}/${assessmentObj.userData.lat}/${assessmentObj.userData.long}`);
+  const handleSubmit = () => {
+    if (
+      !assessmentObj?.todayAssessment?.latitude ||
+      !assessmentObj?.todayAssessment?.longitude
+    ) {
+      navigate(
+        `${ROUTE_MAP.capture_selfie}/${assessmentObj.userData.lat}/${assessmentObj.userData.long}`
+      );
 
       setTimeout(() => {
         setError(false);
       }, 5000);
       return;
-    } else{
+    } else {
       if (distance > 500) {
         setError(`Please ensure you are within the institute premises`);
         setTimeout(() => {
@@ -180,7 +194,9 @@ const handleSubmit = () => {
       return;
     }
 
-    navigate(`${ROUTE_MAP.capture_selfie}/${assessmentObj.todayAssessment.latitude}/${assessmentObj.todayAssessment.longitude}`);
+    navigate(
+      `${ROUTE_MAP.capture_selfie}/${assessmentObj.todayAssessment.latitude}/${assessmentObj.todayAssessment.longitude}`
+    );
   };
 
   useEffect(() => {
@@ -190,82 +206,81 @@ const handleSubmit = () => {
   }, [lat, long]);
 
   useEffect(() => {
-    const { user: { registrations } } = getCookie("userData");
-    const roles = registrations[0]?.roles[0];
-    setRole(roles);
+    // const { user: { registrations } } = getCookie("userData");
+    // const roles = registrations[0]?.roles[0];
+    // setRole(roles);
     getLocationPermissions();
-  }, [])
+  }, []);
 
   return (
-    <CommonLayout back={role == 'Medical' ? ROUTE_MAP.medical_assessments : ROUTE_MAP.assessment_type} 
-      logoutDisabled 
-      iconType='close' 
-      pageTitle="1. Capture Location" 
-      pageDesc="Enable location in your mobile settings and capture Institute's location">
+    <CommonLayout
+      back={
+        role == "Medical"
+          ? ROUTE_MAP.medical_assessments
+          : ROUTE_MAP.assessment_type
+      }
+      logoutDisabled
+      iconType="close"
+      pageTitle="1. Capture Location"
+      pageDesc="Enable location in your mobile settings and capture Institute's location"
+    >
       <div className="flex flex-col px-6 gap-5 pb-5 overflow-y-auto">
         <div className="flex flex-col w-full text-center gap-5">
-          {
-            loading && 
-            (
-              <Loader></Loader>
-            )
-          }
+          {loading && <Loader></Loader>}
 
-          {
-            showMap && !loading && 
-            (
-              <>
-                <div className={`w-full ${showContinue ? 'pointer-events-none' : ''}`}>
-                  <iframe
-                    src={`https://maps.google.com/maps?q=${lat},${long}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-                    width={isMobile ? "100%" : "60%"}
-                    loading="lazy"
-                    title="map"
-                    className={`animate__animated animate__fadeIn ${showContinue ? 'h-[40vh]' : 'h-[50vh]' } `}
-                  />
-                </div>
-                <div className="text-[18px] text-[#009A2B] font-semibold">{ captureLocation }</div>
-              </>
-            )
-          }
+          {showMap && !loading && (
+            <>
+              <div
+                className={`w-full ${
+                  showContinue ? "pointer-events-none" : ""
+                }`}
+              >
+                <iframe
+                  src={`https://maps.google.com/maps?q=${lat},${long}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                  width={isMobile ? "100%" : "60%"}
+                  loading="lazy"
+                  title="map"
+                  className={`animate__animated animate__fadeIn ${
+                    showContinue ? "h-[40vh]" : "h-[50vh]"
+                  } `}
+                />
+              </div>
+              <div className="text-[18px] text-[#009A2B] font-semibold">
+                {captureLocation}
+              </div>
+            </>
+          )}
         </div>
 
-        {
-          error && (
-            <span className="text-white animate__animated animate__headShake bg-red-500 font-medium px-4 py-3 text-center mt-2">
-              {error}
-            </span>
-          )
-        }
+        {error && (
+          <span className="text-white animate__animated animate__headShake bg-red-500 font-medium px-4 py-3 text-center mt-2">
+            {error}
+          </span>
+        )}
 
         <div className="flex flex-col gap-4">
-          {
-            showMap && !showContinue && !loading && 
-            (
+          {showMap && !showContinue && !loading && (
+            <Button
+              text="Capture Location"
+              onClick={() => handleCaptureLocation()}
+              styles="border-primary bg-primary text-white animate__animated animate__fadeInDown"
+            />
+          )}
+          {showContinue && !loading && (
+            <>
               <Button
-                text="Capture Location"
-                onClick={() => handleCaptureLocation()}
-                styles="border-primary bg-primary text-white animate__animated animate__fadeInDown"
+                text="Continue"
+                styles="bg-primary border-primary text-white"
+                onClick={handleSubmit}
               />
-            )
-          }
-          {
-            showContinue && !loading && (
-              <>
-                <Button
-                  text="Continue"
-                  styles="bg-primary border-primary text-white"
-                  onClick={handleSubmit}
-                />
 
-                <Button 
-                  text="Re-capture Location"
-                  onClick={() => handleCaptureLocation('re-capture')}
-                  styles={ `bg-white border-primary text-primary animate__animated animate__fadeInDown` }
-                />
-              </>
-            )
-          }
+              <Button
+                text="Re-capture Location"
+                onClick={() => handleCaptureLocation("re-capture")}
+                styles={`bg-white border-primary text-primary animate__animated animate__fadeInDown`}
+              />
+            </>
+          )}
         </div>
       </div>
     </CommonLayout>

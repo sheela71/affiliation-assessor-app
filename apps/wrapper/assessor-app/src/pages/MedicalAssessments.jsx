@@ -69,15 +69,9 @@ const MedicalAssessments = () => {
       assessor_id: assessor_user_id,
     };
 
-    console.log("stored Data - ", storedData);
-
     const res = await getTodaysAssessment(postData);
-
-    
-
     if (res?.data?.assessment_schedule?.[0]) {
       let ass = res?.data?.assessment_schedule?.[0];
-      console.log(ass);
       setData({
         id: ass.institute.id,
         district: ass.institute.district,
@@ -98,7 +92,6 @@ const MedicalAssessments = () => {
       };
 
       setToLocalForage("required_data", required_data);
-      console.log("required data = ", required_data);
       const validateData = {
         assessor_id: assessor_user_id,
         institute_id: ass.institute.id,
@@ -120,18 +113,19 @@ const MedicalAssessments = () => {
 
   useEffect(() => {
     getTodayAssessments();
-    const {
-      user: { registrations },
-    } = getCookie("userData");
-    const roles = registrations[0]?.roles[0];
-    setRole(roles);
+    // const {
+    //   user: { registrations },
+    // } = getCookie("userData");
+    // const roles = registrations[0]?.roles[0];
+    // setRole(roles);
   }, []);
 
   return (
-    <CommonLayout back={ROUTE_MAP.root}       
-    logoutDisabled ={isOnline ? false : true}
-
-    pageTitle="Today's Inspection">
+    <CommonLayout
+      back={ROUTE_MAP.root}
+      logoutDisabled={isOnline ? false : true}
+      pageTitle="Today's Inspection"
+    >
       <div
         className={`flex flex-col px-6 min-h-[calc(100vh-214px)] overflow-y-scroll pb-6 ${
           !data?.id ? "justify-center" : ""

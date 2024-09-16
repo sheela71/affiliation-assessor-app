@@ -23,7 +23,9 @@ export const APIS = {
   APPLICANT: {
     ADD_INSTITUTE: "rest/addInstitute",
     ADD_INSTITUTE_POC: "rest/addInstitutePoc",
-    GET_APPLICANT_DETAILS: "rest/getApplicant"
+    GET_APPLICANT_DETAILS: "rest/getApplicant",
+    ADD_TRANSACTION: `rest/addTransaction`
+
   },
   PROFILE: {
     VIEW_PROFILE : "rest/getInstitute",
@@ -45,6 +47,7 @@ export const APIS = {
     viewNotification: `rest/viewNotification`
   },
   PAYMENT:{
-    GENERATE_LINK: `payment/generatelink`
+    GENERATE_LINK: `payment/generatelink`,
+    UPDATE_PAYMENT_STATUS: `rest/updatePaymentStatus`
   }
 };
